@@ -16,6 +16,10 @@ class Database {
     return this.database.run(schema.concat(valueAsString), ');');
   }
 
+  selectAll(schema, callback) {
+    return this.database.all(schema, callback);
+  }
+
 }
 
 module.exports={Database}

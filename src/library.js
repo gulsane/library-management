@@ -1,12 +1,19 @@
 const {DataBase} = require("./database");
+const [schema1, schema2, schema3] = require('./tableSchema');
 
 class Library {
   constructor (path) {
     this.db = new DataBase(path)
-    this.methods = {};
+    this.methods = {addBook : this.addBook};
   }
+
   init(path) {
     const library = new Library(path);
-    library.db.createTable('books', 'schema')
+    
+    library.db.createTable(schema1);
+    library.db.createTable(schema2);
+    library.db.createTable(schema3);
+
+    return library;
   }
 }
