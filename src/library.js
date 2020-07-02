@@ -1,20 +1,12 @@
-const Sqlite = require('sqlite3');
-
+const {DataBase} = require("./database");
 
 class Library {
-  constructor(path) {
-    this.path = path;
-    this.database = new Sqlite3.Database(path);
+  constructor (path) {
+    this.db = new DataBase(path)
+    this.methods = {};
   }
-  
-  creatTable(schema) {
-    return this.database.run(schema);
+  init(path) {
+    const library = new Library(path);
+    library.db.createTable('books', 'schema')
   }
-
-  insertInTable(table, values) {
-    const schema = `insert into ${table} values (`;
-    const valueAsString = Object.value(values).map((e) => `'${e}'`).join(',');
-    return this.database.run(schema.concat(valueAsString), ');');
-  }
-
 }

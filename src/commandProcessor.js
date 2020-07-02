@@ -1,3 +1,5 @@
+const {DataBase} = require("./database");
+
 class Processor {
   constructor() {
     this.functions = {};
