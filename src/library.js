@@ -7,6 +7,10 @@ class Library {
     this.methods = {addBook : this.addBook};
   }
 
+  addBook(arguments) {
+    this.db.insertInTable('books', arguments);
+  }
+
   run(command, arguments) {
     return this.methods[command](arguments);
   }
