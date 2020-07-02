@@ -1,0 +1,23 @@
+{
+  "name": "library-management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "library.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gulsane/library-management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gulsane/library-management/issues"
+  },
+  "homepage": "https://github.com/gulsane/library-management#readme",
+  "dependencies": {
+    "sqlite3": "^5.0.0"
+  }
+}
