@@ -1,0 +1,77 @@
+cli phases 
+
+now
+ 
+  same for librarian and user
+
+later
+
+  1>librarian
+  2>user
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>searching mechanism<<<<<<<<<<<<<<<<<<<
+
+according to 
+1 isbn
+2 category
+3 author
+4 book name
+5 see all books
+6 available books        --later
+7 most borrowed books    --later
+8 user borrowed books    --later
+9 recently available books   --later
+
+--------------------------librarian---------------------
+
+1 able to add a book in library (new book)
+    --> cmd as ( add new isbn=__ title=__ author=__ category=__ )
+      
+
+        --> book =>(+) isbn, title, category
+        --> book_copies =>(+) isbn, serial_no
+
+2 able to add a book (already present)
+
+    --> cmd as ( add isbn=__ )
+
+    if isbn present
+        --> book_copies  =>(+) isbn, serial_no(new)
+
+    if not 
+        --> book is not present give all details
+
+
+
+--------------------------user----------------------------
+
+1 can borrow a book
+
+    --> cmd as ( borrow user_name=__ title=__ )
+    or
+    --> cmd as ( borrow user_name=__ isbn=__ )
+    or
+    --> cmd as ( borrow user_name=__ serial_no=__ )
+
+step 1
+    search according to attribute given ==> returns ( serial_no if present ) 
+    other wise go out of steps and given book not available
+
+step 2 
+    --> make that copy unavailable in book_copy
+    --> update library_log with (serial_no, action, date , user_name)
+
+step 3 
+    --> give ok (or) given book not available
+
+------------------------
+
+2 can return a book
+
+    --> cmd as ( return serial_no=__ )
+
+    steps
+
+    -->make book available in copy
+    --> update library_log with (serial_no, action, date, id)
