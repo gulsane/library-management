@@ -8,7 +8,11 @@ class Library {
   }
 
   addBook(arguments) {
-    this.db.insertInTable('books', arguments);
+    return this.db.insertInTable('books', arguments);
+  }
+
+  show(table) {
+    this.db.selectAll(`select * from ${table}`, (rows) => console.table(rows));
   }
 
   run(command, arguments) {
