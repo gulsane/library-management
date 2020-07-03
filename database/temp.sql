@@ -24,12 +24,12 @@ create table book_copies (
 
 --SAMPLE data
 
-insert into book_copies values 
-('AB1234', 00001, 1),
-('AB1235', 00002, 1),
-('AB1235', 00003, 1),
-('AB1236', 00004, 1),
-('AB1236', 00005, 1);
+-- insert into book_copies values 
+-- ('AB1234', 00001, 1),
+-- ('AB1235', 00002, 1),
+-- ('AB1235', 00003, 1),
+-- ('AB1236', 00004, 1),
+-- ('AB1236', 00005, 1);
 
 SELECT * from book_copies;
 
@@ -41,6 +41,7 @@ create table library_log (
   user_name VARCHAR(20)
 );
 
+SELECT MAX(serial_no) +1 from book_copies;
 -- sample data
 
 insert into library_log VALUES
