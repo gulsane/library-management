@@ -12,12 +12,15 @@ const startManagement = function (library) {
       });
     });
 
-  vorpal.command('show <table>').action(function (args, callback) {
-    library.show(args).then((rows) => {
-      console.table(rows);
-      callback();
+  vorpal
+    .command('show <table>')
+    .autocomplete(['books', 'book_copies', 'library_log'])
+    .action(function (args, callback) {
+      library.show(args).then((rows) => {
+        console.table(rows);
+        callback();
+      });
     });
-  });
 };
 
 module.exports = { startManagement };
