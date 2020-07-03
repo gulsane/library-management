@@ -1,30 +1,34 @@
-const DataBase = require("./database").Database;
-const { schema1, schema2, schema3 } = require("./tableSchema");
+const DataBase = require('./database').Database;
+const { schema1, schema2, schema3 } = require('./tableSchema');
 
 class Library {
   constructor(path) {
     this.db = new DataBase(path);
   }
 
-  addBook(info) {
-    console.log("from add books", info);
-    this.db.getSerialNumber().then((data) => {
-      const serial_no = data.serial_number == null ? 1 : data.serial_number + 1;
-      const bookInfo = [info[0], serial_no, true];
-      this.db.insertInTable("books", info);
-      this.db.insertInTable("book_copies", bookInfo);
+  addBook({ ISBN, title, category, author }) {
+    return new Promise((resolve, reject) => {
+      this.db.getSerialNumber().then((serial_number) => {
+        const serial_no = serial_number == null ? 1 : serial_number + 1;
+        this.db
+          .insertInTable('books', [ISBN, title, category, author])
+          .then(() =>
+            this.db.insertInTable('book_copies', [ISBN, serial_no, true])
+          )
+          .then(() => resolve('OK'))
+          .catch((msg) => reject(`error happened with msg : ${msg}`));
+      });
     });
   }
 
   show({ table }) {
-    this.db.selectAll(`select * from ${table};`, (err, rows) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log();
-        console.table(rows);
-      }
-    });
+    return new Promise((resolve, reject) =>
+      this.db.selectAll(table, (err, rows) => {
+        if (!err) {
+          resolve(rows);
+        }
+      })
+    );
   }
 
   static init(path) {

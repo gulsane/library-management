@@ -1,22 +1,23 @@
-const vorpal = require("vorpal")();
+const vorpal = require('vorpal')();
 
 const startManagement = function (library) {
-  this.library = library;
-  vorpal.command('addBook [attributes...]')
-    .action(function (argument, callback) {
-      library.addBook(argument.attributes);
-      callback();
-    })
+  vorpal.delimiter(vorpal.chalk.cyan('library-management $')).show();
 
-  vorpal.command('show books')
+  vorpal
+    .command('addBook <ISBN> <title> <category> <author>')
     .action(function (argument, callback) {
-      library.show({table: 'books'})
-      callback();
+      library.addBook(argument).then((msg) => {
+        this.log(msg);
+        callback();
+      });
     });
 
-  vorpal.delimiter('library-management $')
-    .show();
+  vorpal.command('show <table>').action(function (args, callback) {
+    library.show(args).then((rows) => {
+      console.table(rows);
+      callback();
+    });
+  });
+};
 
-}
-
-module.exports = {startManagement};
+module.exports = { startManagement };
