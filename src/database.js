@@ -1,5 +1,5 @@
 const Sqlite = require('sqlite3');
-const { resolve } = require('path');
+const { books_select } = require('./schema');
 
 class Database {
   constructor(path) {
@@ -52,7 +52,9 @@ class Database {
   }
 
   selectAll(tableName, callback) {
-    const schema = `select * from ${tableName};`;
+    let schema = `select * from ${tableName};`;
+    if (tableName === 'books')
+      schema = books_select;
     return this.database.all(schema, callback);
   }
 }

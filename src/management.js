@@ -32,6 +32,24 @@ const startManagement = function (library) {
   });
 
   vorpal
+    .command('borrow')
+    .option('-i, --ISBN <book_isbn>')
+    .option('-s, --serial_no <book_serial_no>')
+    .option('-t, --title <book_name>')
+    .action(function (argument, callback) {
+      library
+        .borrowBook(argument.options)
+        .then((msg) => {
+          this.log(msg);
+          callback();
+        })
+        .catch((msg) => {
+          this.log(msg);
+          callback();
+        });
+    });
+
+  vorpal
     .command('show <table>')
     .autocomplete(['books', 'book_copies', 'library_log'])
     .action(function (args, callback) {

@@ -24,16 +24,26 @@ create table book_copies (
 
 --SAMPLE data
 
--- insert into book_copies values 
--- ('AB1234', 00001, 1),
--- ('AB1235', 00002, 1),
--- ('AB1235', 00003, 1),
--- ('AB1236', 00004, 1),
--- ('AB1236', 00005, 1);
+insert into book_copies values 
+('AB1234', 00001, 1),
+('AB1235', 00002, 1),
+('AB1235', 00003, 1),
+('AB1236', 00004, 1),
+('AB1236', 00005, 1);
 
 SELECT * from book_copies;
 
-drop table if exists library_log;
+SELECT books.ISBN
+      ,books.title
+      ,books.category
+      ,books.author
+      ,count(*) as books_count
+from books
+join book_copies
+on books.ISBN = book_copies.ISBN
+group by books.ISBN;
+
+-- drop table if exists library_log;
 
 create table library_log (
   serial_no NUMERIC(5) not null,

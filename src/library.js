@@ -1,5 +1,5 @@
 const DataBase = require('./database').Database;
-const { schema1, schema2, schema3 } = require('./tableSchema');
+const { books_table_schema, copies_table_schema, log_table_schema } = require('./schema');
 const { resolve } = require('path');
 
 class Library {
@@ -38,6 +38,12 @@ class Library {
     });
   }
 
+  borrowBook(options) {
+    return new Promise((resolve, reject) => {
+      resolve(options);
+    })
+  }
+
   show({ table }) {
     return new Promise((resolve, reject) =>
       this.db.selectAll(table, (err, rows) => {
@@ -51,9 +57,9 @@ class Library {
   static init(path) {
     const library = new Library(path);
 
-    library.db.creatTable(schema1);
-    library.db.creatTable(schema2);
-    library.db.creatTable(schema3);
+    library.db.creatTable(books_table_schema);
+    library.db.creatTable(copies_table_schema);
+    library.db.creatTable(log_table_schema);
 
     return library;
   }
