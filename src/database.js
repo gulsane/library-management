@@ -52,9 +52,7 @@ class Database {
   }
 
   selectAll(tableName, callback) {
-    let schema = `select * from ${tableName};`;
-    if (tableName === 'books')
-      schema = books_select;
+    const schema = !tableName ? books_select : `select * from ${tableName};`;
     return this.database.all(schema, callback);
   }
 }
