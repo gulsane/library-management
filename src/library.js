@@ -1,31 +1,45 @@
-const {DataBase} = require("./database");
-const [schema1, schema2, schema3] = require('./tableSchema');
+const DataBase = require('./database').Database;
+const { schema1, schema2, schema3 } = require('./tableSchema');
 
 class Library {
-  constructor (path) {
-    this.db = new DataBase(path)
-    this.methods = {addBook : this.addBook};
+  constructor(path) {
+    this.db = new DataBase(path);
   }
 
-  addBook(arguments) {
-    return this.db.insertInTable('books', arguments);
+  get_method(command) {
+    const methods = { addBook: this.addBook, show: this.show };
+    return methods[command].bind(this);
   }
 
-  show(table) {
-    this.db.selectAll(`select * from ${table}`, (rows) => console.table(rows));
+  addBook(info) {
+    return this.db.insertInTable('books', info);
   }
 
-  run(command, arguments) {
-    return this.methods[command](arguments);
+  show({ table }) {
+    this.db.selectAll(`select * from ${table};`, (err, rows) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log();
+        console.table(rows);
+      }
+    });
   }
 
-  init(path) {
+  run(command, info) {
+    const operation = this.get_method(command);
+    return operation(info);
+  }
+
+  static init(path) {
     const library = new Library(path);
 
-    library.db.createTable(schema1);
-    library.db.createTable(schema2);
-    library.db.createTable(schema3);
+    library.db.creatTable(schema1);
+    library.db.creatTable(schema2);
+    library.db.creatTable(schema3);
 
     return library;
   }
 }
+
+module.exports = { Library };
