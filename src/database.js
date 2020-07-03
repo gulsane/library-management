@@ -7,14 +7,15 @@ class Database {
   }
 
   creatTable(schema) {
-    return this.database.run(
-      schema,
-      (err) => err && console.log('error in creation', err)
-    );
+    return new Promise((resolve, reject) => {
+      this.database.run(schema, (err) => {
+        if (err) reject(err);
+        resolve('OK');
+      });
+    });
   }
 
   insertInTable(table, values) {
-    console.log('-------->', values);
     const schema = `insert into ${table} values (`;
     const valueAsString = values.map((e) => `'${e}'`).join(',');
     return new Promise((resolve, reject) => {
