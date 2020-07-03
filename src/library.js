@@ -1,21 +1,17 @@
 const DataBase = require('./database').Database;
-const { schema1, schema2, schema3 } = require('./tableSchema');
+const {schema1, schema2, schema3} = require('./tableSchema');
 
 class Library {
-  constructor(path) {
+  constructor (path) {
     this.db = new DataBase(path);
   }
 
-  get_method(command) {
-    const methods = { addBook: this.addBook, show: this.show };
-    return methods[command].bind(this);
-  }
-
   addBook(info) {
+    console.log("from add books", info);
     return this.db.insertInTable('books', info);
   }
 
-  show({ table }) {
+  show({table}) {
     this.db.selectAll(`select * from ${table};`, (err, rows) => {
       if (err) {
         console.log(err);
@@ -24,11 +20,6 @@ class Library {
         console.table(rows);
       }
     });
-  }
-
-  run(command, info) {
-    const operation = this.get_method(command);
-    return operation(info);
   }
 
   static init(path) {
@@ -42,4 +33,4 @@ class Library {
   }
 }
 
-module.exports = { Library };
+module.exports = {Library};
