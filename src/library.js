@@ -1,5 +1,6 @@
 const DataBase = require('./database').Database;
 const { schema1, schema2, schema3 } = require('./tableSchema');
+const { resolve } = require('path');
 
 class Library {
   constructor(path) {
@@ -17,6 +18,22 @@ class Library {
           )
           .then(() => resolve('OK'))
           .catch((msg) => reject(`error happened with msg : ${msg}`));
+      });
+    });
+  }
+
+  addCopy({ ISBN }) {
+    return new Promise((resolve, reject) => {
+      this.db.getSerialNumber().then((serial_number) => {
+        this.db
+          .isIsbnAvailable(ISBN)
+          .then(() => {
+            const serial_no = serial_number == null ? 1 : serial_number + 1;
+            this.db
+              .insertInTable('book_copies', [ISBN, serial_no, true])
+              .then(() => resolve('OK'));
+          })
+          .catch(() => reject('ISBN not available'));
       });
     });
   }
