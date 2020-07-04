@@ -43,9 +43,7 @@ class Library {
   }
 
   borrowBook(options) {
-    return new Promise((resolve, reject) => {
-      resolve(options);
-    });
+    return this.db.borrow(options);
   }
 
   show({ table }) {

@@ -71,9 +71,7 @@ class Database {
     for (let option in options) {
       searchOptions.push(`${option}=='${options[option]}'`);
     }
-    const schema = `select * from (${books_select}) where ${searchOptions.join(
-      ' and '
-    )}`;
+    const schema = `select * from (${books_select}) where ${searchOptions.join( ' and ' )};`;
 
     return new Promise((resolve, reject) => {
       this.select(schema).then((row) => {

@@ -34,5 +34,5 @@ module.exports = {
        from books
        join book_copies
 on books.ISBN = book_copies.ISBN
-group by books.ISBN;`,
+group by books.ISBN`,
 };
