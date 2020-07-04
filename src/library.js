@@ -42,8 +42,8 @@ class Library {
     });
   }
 
-  borrowBook(options) {
-    return this.db.borrow(options);
+  borrowBook({user_name, options}) {
+    return this.db.borrow(user_name, options);
   }
 
   show({ table }) {

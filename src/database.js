@@ -66,7 +66,7 @@ class Database {
     });
   }
 
-  borrow(options) {
+  borrow(user_name, options) {
     let searchOptions = [];
     for (let option in options) {
       searchOptions.push(`${option}=='${options[option]}'`);
@@ -78,10 +78,14 @@ class Database {
         const schema = `select * from book_copies where ISBN='${row.ISBN}' and is_available='true';`;
 
         this.select(schema)
-          .then((available_copy) => {
-            this.updateBookAvailability(available_copy.serial_no, 'false');
+          .then((book_copy) => {
+            this.updateBookAvailability(book_copy.serial_no, 'false');
+            return `${book_copy.serial_no}`;
           })
-          .then(() => resolve('borrow successful'))
+          .then((serial_no) => {
+            this.insertInTable('library_log', [serial_no, 'borrow', user_name]);
+          })
+          .then(() => resolve(`borrow successful\n  title : ${row.title}\n  user  : ${user_name}`))
           .catch((msg) => reject(`${msg}\n\nPlease take a look on available books by using command :-\n * show`));
       });
     });

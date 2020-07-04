@@ -33,7 +33,7 @@ const startManagement = function (library) {
 
   vorpal
     .command(
-      'borrow',
+      'borrow <user_name>',
       'at least one optional command needed for borrow command'
     )
     .option('-i, --ISBN <book_isbn>')
@@ -44,9 +44,9 @@ const startManagement = function (library) {
     })
     .action(function (argument, callback) {
       library
-        .borrowBook(argument.options)
-        .then(() => {
-          this.log('borrow successful');
+        .borrowBook(argument)
+        .then((msg) => {
+          this.log(msg);
           callback();
         })
         .catch((msg) => {
