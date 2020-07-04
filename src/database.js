@@ -1,5 +1,5 @@
-const Sqlite = require('sqlite3');
-const { books_select } = require('./schema');
+const Sqlite = require("sqlite3");
+const { books_select } = require("./schema");
 
 class Database {
   constructor(path) {
@@ -11,16 +11,16 @@ class Database {
     return new Promise((resolve, reject) => {
       this.database.run(schema, (err) => {
         if (err) reject(err);
-        resolve('OK');
+        resolve("OK");
       });
     });
   }
 
   insertInTable(table, values) {
     const schema = `insert into ${table} values (`;
-    const valueAsString = values.map((e) => `'${e}'`).join(',');
+    const valueAsString = values.map((e) => `'${e}'`).join(",");
     return new Promise((resolve, reject) => {
-      this.database.run(schema.concat(valueAsString, ');'), (err) => {
+      this.database.run(schema.concat(valueAsString, ");"), (err) => {
         if (err) reject(err);
         resolve();
       });
@@ -35,7 +35,7 @@ class Database {
   getSerialNumber() {
     return new Promise((resolve, reject) => {
       this.database.get(
-        'SELECT MAX(serial_no) as serial_number from book_copies;',
+        "SELECT MAX(serial_no) as serial_number from book_copies;",
         (err, row) => {
           if (err) reject(err);
           resolve(row.serial_number);
@@ -60,7 +60,7 @@ class Database {
     return new Promise((resolve, reject) => {
       this.database.get(schema, (err, row) => {
         if (err) reject(err);
-        if (!row) reject('Book not found');
+        if (!row) reject("Book not found");
         resolve(row);
       });
     });
@@ -72,7 +72,7 @@ class Database {
       searchOptions.push(`${option}=='${options[option]}'`);
     }
     const schema = `select * from (${books_select}) where ${searchOptions.join(
-      ' and '
+      " and "
     )};`;
 
     return new Promise((resolve, reject) => {
@@ -81,11 +81,11 @@ class Database {
 
         this.select(schema)
           .then((book_copy) => {
-            this.updateBookAvailability(book_copy.serial_no, 'false');
+            this.updateBookAvailability(book_copy.serial_no, "false");
             return `${book_copy.serial_no}`;
           })
           .then((serial_no) => {
-            this.insertInTable('library_log', [serial_no, 'borrow', user_name]);
+            this.insertInTable("register", [serial_no, "borrow", user_name]);
             return serial_no;
           })
           .then((serial_no) =>
@@ -96,7 +96,7 @@ class Database {
           .catch((err) =>
             reject(
               err ||
-                'Book not available\n\nPlease take a look on available books by using command :-\n * show'
+                "Book not available\n\nPlease take a look on available books by using command :-\n * show"
             )
           );
       });
@@ -108,11 +108,11 @@ class Database {
     return new Promise((resolve, reject) => {
       this.select(schema)
         .then((row) => {
-          this.updateBookAvailability(row.serial_no, 'true');
-          this.insertInTable('library_log', [serial_no, 'return', user_name]);
-          resolve('return successful');
+          this.updateBookAvailability(row.serial_no, "true");
+          this.insertInTable("register", [serial_no, "return", user_name]);
+          resolve("return successful");
         })
-        .catch(() => reject('Book was not taken'));
+        .catch(() => reject("Book was not taken"));
     });
   }
 

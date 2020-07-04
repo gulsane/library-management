@@ -60,7 +60,7 @@ step 1
 
 step 2 
     --> make that copy unavailable in book_copy
-    --> update library_log with (serial_no, action, date , user_name)
+    --> update register with (serial_no, action, date , user_name)
 
 step 3 
     --> give ok (or) given book not available
@@ -74,4 +74,4 @@ step 3
     steps
 
     -->make book available in copy
-    --> update library_log with (serial_no, action, date, id)
+    --> update register with (serial_no, action, date, id)

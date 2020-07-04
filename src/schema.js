@@ -1,4 +1,4 @@
-// drop table if exists library_log;
+// drop table if exists register;
 // drop table if exists books;
 // drop table if exists book_copies;
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
   );`,
 
   log_table_schema: `
-  create table if not exists library_log (
+  create table if not exists register (
     serial_no NUMERIC(5) not null,
     action VARCHAR(10) not null,
     user_name VARCHAR(20)

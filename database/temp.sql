@@ -89,9 +89,9 @@ where ISBN ='AB1234' or title ='new_book_1';
 select count(is_available) from book_copies
 where is_available = false;
 
--- drop table if exists library_log;
+-- drop table if exists register;
 
-create table library_log (
+create table register (
   serial_no NUMERIC(5) not null,
   action VARCHAR(10) not null,
   user_name VARCHAR(20)
@@ -100,7 +100,7 @@ create table library_log (
 SELECT MAX(serial_no) +1 from book_copies;
 -- sample data
 
-insert into library_log VALUES
+insert into register VALUES
 (00001, 'return', 'ayush'),
 (00002, 'return', 'gulshan'),
 (00003, 'borrow', 'ayush'),
@@ -108,4 +108,4 @@ insert into library_log VALUES
 (00002, 'borrow', 'gulshan'),
 (00001, 'borrow', 'ayush');
 
-select * from library_log;
+select * from register;

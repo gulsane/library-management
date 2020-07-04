@@ -1,10 +1,10 @@
-const vorpal = require('vorpal')();
+const vorpal = require("vorpal")();
 
 const startManagement = function (library) {
-  vorpal.delimiter(vorpal.chalk.cyan('library-management $')).show();
+  vorpal.delimiter(vorpal.chalk.cyan("library-management $")).show();
 
   vorpal
-    .command('addNewBook <ISBN> <title> <category> <author>')
+    .command("add new book <ISBN> <title> <category> <author>")
     .action(function (argument, callback) {
       library
         .addBook(argument)
@@ -18,7 +18,7 @@ const startManagement = function (library) {
         });
     });
 
-  vorpal.command('addCopy <ISBN>').action(function (argument, callback) {
+  vorpal.command("add copy <ISBN>").action(function (argument, callback) {
     library
       .addCopy(argument)
       .then((msg) => {
@@ -33,14 +33,14 @@ const startManagement = function (library) {
 
   vorpal
     .command(
-      'borrow <user_name>',
-      'at least one optional command needed for borrow command'
+      "borrow <user_name>",
+      "at least one optional command needed for borrow command"
     )
-    .option('-i, --ISBN <book_isbn>')
-    .option('-t, --title <book_name>')
+    .option("-i, --ISBN <book_isbn>")
+    .option("-t, --title <book_name>")
     .validate((args) => {
       if (Object.values(args.options).length) return true;
-      return 'missing arguments to borrow command';
+      return "missing arguments to borrow command";
     })
     .action(function (argument, callback) {
       library
@@ -50,15 +50,15 @@ const startManagement = function (library) {
           callback();
         })
         .catch((msg) => {
-          this.log(msg || 'borrow unsuccessful');
+          this.log(msg || "borrow unsuccessful");
           callback();
         });
     });
-  
+
   vorpal
     .command(
-      'return <user_name> <serial_no>',
-      'serial number needed to return a book'
+      "return <user_name> <serial_no>",
+      "serial number needed to return a book"
     )
     .action(function (argument, callback) {
       library
@@ -68,14 +68,14 @@ const startManagement = function (library) {
           callback();
         })
         .catch((msg) => {
-          this.log(msg || 'return unsuccessful');
+          this.log(msg || "return unsuccessful");
           callback();
         });
     });
 
   vorpal
-    .command('show [table]')
-    .autocomplete(['books', 'book_copies', 'library_log'])
+    .command("show [table]")
+    .autocomplete(["books", "book_copies", "register"])
     .action(function (args, callback) {
       library
         .show(args)
