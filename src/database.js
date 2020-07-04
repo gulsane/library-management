@@ -60,7 +60,7 @@ class Database {
     return new Promise((resolve, reject) => {
       this.database.get(schema, (err, row) => {
         if (err) reject(err);
-        if (!row) reject('Book not available');
+        if (!row) reject('Book not found');
         resolve(row);
       });
     });
@@ -71,7 +71,9 @@ class Database {
     for (let option in options) {
       searchOptions.push(`${option}=='${options[option]}'`);
     }
-    const schema = `select * from (${books_select}) where ${searchOptions.join( ' and ' )};`;
+    const schema = `select * from (${books_select}) where ${searchOptions.join(
+      ' and '
+    )};`;
 
     return new Promise((resolve, reject) => {
       this.select(schema).then((row) => {
@@ -84,10 +86,33 @@ class Database {
           })
           .then((serial_no) => {
             this.insertInTable('library_log', [serial_no, 'borrow', user_name]);
+            return serial_no;
           })
-          .then(() => resolve(`borrow successful\n  title : ${row.title}\n  user  : ${user_name}`))
-          .catch((msg) => reject(`${msg}\n\nPlease take a look on available books by using command :-\n * show`));
+          .then((serial_no) =>
+            resolve(
+              `borrow successful\n  title : ${row.title}\n  user  : ${user_name}\n  serial_no : ${serial_no}`
+            )
+          )
+          .catch((err) =>
+            reject(
+              err ||
+                'Book not available\n\nPlease take a look on available books by using command :-\n * show'
+            )
+          );
       });
+    });
+  }
+
+  return(user_name, serial_no) {
+    const schema = `select * from book_copies where serial_no='${serial_no}' and is_available='false';`;
+    return new Promise((resolve, reject) => {
+      this.select(schema)
+        .then((row) => {
+          this.updateBookAvailability(row.serial_no, 'true');
+          this.insertInTable('library_log', [serial_no, 'return', user_name]);
+          resolve('return successful');
+        })
+        .catch(() => reject('Book was not taken'));
     });
   }
 

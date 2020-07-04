@@ -54,6 +54,24 @@ const startManagement = function (library) {
           callback();
         });
     });
+  
+  vorpal
+    .command(
+      'return <user_name> <serial_no>',
+      'serial number needed to return a book'
+    )
+    .action(function (argument, callback) {
+      library
+        .returnBook(argument)
+        .then((msg) => {
+          this.log(msg);
+          callback();
+        })
+        .catch((msg) => {
+          this.log(msg || 'return unsuccessful');
+          callback();
+        });
+    });
 
   vorpal
     .command('show [table]')
