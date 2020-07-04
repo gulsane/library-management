@@ -25,11 +25,15 @@ create table book_copies (
 --SAMPLE data
 
 insert into book_copies values 
-('AB1234', 00001, 1),
-('AB1235', 00002, 1),
-('AB1235', 00003, 1),
-('AB1236', 00004, 1),
-('AB1236', 00005, 1);
+('AB1234', 00001, 'true'),
+('AB1235', 00002, 'true'),
+('AB1235', 00003, 'true'),
+('AB1236', 00004, 'true'),
+('AB1236', 00005, 'true');
+
+UPDATE book_copies
+set is_available = 'false'
+where serial_no=00005;
 
 SELECT * from book_copies;
 
@@ -42,6 +46,19 @@ from books
 join book_copies
 on books.ISBN = book_copies.ISBN
 group by books.ISBN;
+
+
+SELECT * 
+from (SELECT books.ISBN
+      ,books.title
+      ,books.category
+      ,books.author
+      ,count(*) as books_count
+  from books
+  join book_copies
+  on books.ISBN = book_copies.ISBN
+  group by books.ISBN)
+where ISBN=='AB1234' or title=='new_book_1';
 
 -- drop table if exists library_log;
 

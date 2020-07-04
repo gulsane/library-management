@@ -32,9 +32,11 @@ const startManagement = function (library) {
   });
 
   vorpal
-    .command('borrow', 'at least one optional command needed for borrow command')
+    .command(
+      'borrow',
+      'at least one optional command needed for borrow command'
+    )
     .option('-i, --ISBN <book_isbn>')
-    .option('-s, --serial_no <book_serial_no>')
     .option('-t, --title <book_name>')
     .validate((args) => {
       if (Object.values(args.options).length) return true;
@@ -43,12 +45,12 @@ const startManagement = function (library) {
     .action(function (argument, callback) {
       library
         .borrowBook(argument.options)
-        .then((msg) => {
-          this.log(msg);
+        .then(() => {
+          this.log('borrow successful');
           callback();
         })
         .catch((msg) => {
-          this.log(msg);
+          this.log(msg || 'borrow unsuccessful');
           callback();
         });
     });
