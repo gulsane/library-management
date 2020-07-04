@@ -1,6 +1,10 @@
-const DataBase = require('./database').Database;
-const { books_table_schema, copies_table_schema, log_table_schema } = require('./schema');
-const { resolve } = require('path');
+const DataBase = require("./database").Database;
+const {
+  books_table_schema,
+  copies_table_schema,
+  log_table_schema,
+} = require("./schema");
+const { resolve } = require("path");
 
 class Library {
   constructor(path) {
@@ -12,11 +16,11 @@ class Library {
       this.db.getSerialNumber().then((serial_number) => {
         const serial_no = serial_number == null ? 1 : serial_number + 1;
         this.db
-          .insertInTable('books', [ISBN, title, category, author])
+          .insertInTable("books", [ISBN, title, category, author])
           .then(() =>
-            this.db.insertInTable('book_copies', [ISBN, serial_no, true])
+            this.db.insertInTable("book_copies", [ISBN, serial_no, true])
           )
-          .then(() => resolve('OK'))
+          .then(() => resolve("OK"))
           .catch((msg) => reject(`error happened with msg : ${msg}`));
       });
     });
@@ -30,16 +34,18 @@ class Library {
           .then(() => {
             const serial_no = serial_number == null ? 1 : serial_number + 1;
             this.db
-              .insertInTable('book_copies', [ISBN, serial_no, true])
-              .then(() => resolve('OK'));
+              .insertInTable("book_copies", [ISBN, serial_no, true])
+              .then(() => resolve("OK"));
           })
-          .catch(() => reject('ISBN not available'));
+          .catch(() => reject("ISBN not available"));
       });
     });
   }
 
   borrowBook(options) {
-    return this.db.borrow(options);
+    return new Promise((resolve, reject) => {
+      resolve(options);
+    });
   }
 
   show({ table }) {

@@ -13,7 +13,6 @@ insert into books values
 ('AB1235', 'new_book_1', 'category 2', 'author 2'),
 ('AB1236', 'new_book_2', 'category 1', 'author 3');
 
-SELECT * from books;
 
 DROP table if exists book_copies;
 create table book_copies (
@@ -26,27 +25,55 @@ create table book_copies (
 
 insert into book_copies values 
 ('AB1234', 00001, 'true'),
-('AB1235', 00002, 'true'),
+('AB1235', 00002, 'false'),
 ('AB1235', 00003, 'true'),
-('AB1236', 00004, 'true'),
-('AB1236', 00005, 'true');
+('AB1236', 00004, 'false'),
+('AB1236', 00005, 'false');
 
-UPDATE book_copies
-set is_available = 'false'
-where serial_no=00005;
+-- UPDATE book_copies
+-- set is_available = 'false'
+-- where serial_no=00005;
+-- ('AB1234', 00001, true),
+-- ('AB1235', 00002, true),
+-- ('AB1235', 00003, true),
+-- ('AB1236', 00004, true),
+-- ('AB1236', 00005, false);
+-- SELECT * from books;
 
 SELECT * from book_copies;
 
-SELECT books.ISBN
+SELECT DISTINCT books.ISBN
       ,books.title
       ,books.category
       ,books.author
-      ,count(*) as books_count
+      ,count(*) over(PARTITION by books.ISBN) as books_count
+      ,count(*) filter( WHERE book_copies.is_available = 'true') over(PARTITION by books.ISBN) as avialable
 from books
 join book_copies
 on books.ISBN = book_copies.ISBN
+;
+
+SELECT  books.ISBN
+       ,books.title
+       ,books.category
+       ,books.author
+       ,count(*) as books_count
+       ,count(*) FILTER(WHERE book_copies.is_available = 'true') as available 
+       from books
+       join book_copies
+on books.ISBN = book_copies.ISBN
 group by books.ISBN;
 
+-- SELECT books.ISBN
+--       ,books.title
+--       ,books.category
+--       ,books.author
+--       ,count(*)  as is_available
+-- from books
+-- join book_copies
+-- on books.ISBN = book_copies.ISBN 
+-- and book_copies.is_available == true
+-- group by books.ISBN;
 
 SELECT * 
 from (SELECT books.ISBN
@@ -58,7 +85,9 @@ from (SELECT books.ISBN
   join book_copies
   on books.ISBN = book_copies.ISBN
   group by books.ISBN)
-where ISBN=='AB1234' or title=='new_book_1';
+where ISBN ='AB1234' or title ='new_book_1';
+select count(is_available) from book_copies
+where is_available = false;
 
 -- drop table if exists library_log;
 
