@@ -4,7 +4,6 @@ const {
   copies_table_schema,
   log_table_schema,
 } = require("./schema");
-const { resolve } = require("path");
 
 class Library {
   constructor(path) {
@@ -16,11 +15,11 @@ class Library {
       this.db.getSerialNumber().then((serial_number) => {
         const serial_no = serial_number == null ? 1 : serial_number + 1;
         this.db
-          .insertInTable('books', [ISBN, title, category, author])
+          .insertInTable("books", [ISBN, title, category, author])
           .then(() =>
-            this.db.insertInTable('book_copies', [ISBN, serial_no, true])
+            this.db.insertInTable("book_copies", [ISBN, serial_no, true])
           )
-          .then(() => resolve('OK'))
+          .then(() => resolve({ ISBN, title, category, author }))
           .catch((msg) => reject(`error happened with msg : ${msg}`));
       });
     });
@@ -28,16 +27,16 @@ class Library {
 
   addCopy({ ISBN }) {
     return new Promise((resolve, reject) => {
-      this.db.getSerialNumber().then((serial_number) => {
+      this.db.isIsbnAvailable(ISBN).then(() => {
         this.db
-          .isIsbnAvailable(ISBN)
-          .then(() => {
+          .getSerialNumber()
+          .then((serial_number) => {
             const serial_no = serial_number == null ? 1 : serial_number + 1;
             this.db
-              .insertInTable('book_copies', [ISBN, serial_no, true])
-              .then(() => resolve('OK'));
+              .insertInTable("book_copies", [ISBN, serial_no, true])
+              .then(() => resolve({ ISBN }));
           })
-          .catch(() => reject('ISBN not available'));
+          .catch(() => reject("ISBN not available"));
       });
     });
   }
@@ -46,7 +45,7 @@ class Library {
     return this.db.borrow(user_name, options);
   }
 
-  returnBook({user_name, serial_no}) {
+  returnBook({ user_name, serial_no }) {
     return this.db.return(user_name, serial_no);
   }
 
