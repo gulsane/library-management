@@ -46,7 +46,7 @@ class Library {
   }
 
   returnBook({ user_name, serial_no }) {
-    return this.db.return(user_name, serial_no);
+    return this.db.updateBorrowedBook(user_name, serial_no);
   }
 
   show({ table }) {

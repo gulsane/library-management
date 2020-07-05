@@ -27,11 +27,6 @@ class Database {
     });
   }
 
-  updateBookAvailability(serial_no, curr_condition) {
-    const schema = `update book_copies set is_available = '${curr_condition}' where serial_no='${serial_no}';`;
-    this.database.run(schema);
-  }
-
   getSerialNumber() {
     return new Promise((resolve, reject) => {
       this.database.get(
@@ -56,7 +51,7 @@ class Database {
     });
   }
 
-  select(schema) {
+  getAll(schema) {
     return new Promise((resolve, reject) => {
       this.database.get(schema, (err, row) => {
         if (err) reject(err);
@@ -66,31 +61,41 @@ class Database {
     });
   }
 
-  borrow(user_name, options) {
+  createTransaction(operations) {
+    const operationsList = operations.join(";");
+    const transaction = `BEGIN TRANSACTION; ${operationsList}; COMMIT;`;
+    return transaction;
+  }
+
+  getAvailableBooksQuery(options) {
     let searchOptions = [];
     for (let option in options) {
       searchOptions.push(`${option}=='${options[option]}'`);
     }
-    const schema = `select * from (${books_select}) where ${searchOptions.join(
+    return `select * from (${books_select}) where ${searchOptions.join(
       " and "
     )};`;
+  }
 
+  borrow(user_name, options) {
+    const availableBooksQuery = this.getAvailableBooksQuery(options);
     return new Promise((resolve, reject) => {
-      this.select(schema).then((row) => {
-        const schema = `select * from book_copies where ISBN='${row.ISBN}' and is_available='true';`;
+      this.getAll(availableBooksQuery).then((row) => {
+        const isBookAvailable = `select * from book_copies where ISBN='${row.ISBN}' and is_available='true';`;
 
-        this.select(schema)
+        this.getAll(isBookAvailable)
           .then((book_copy) => {
-            this.updateBookAvailability(book_copy.serial_no, "false");
+            const updateTable = `update book_copies set is_available = 'false' where serial_no='${book_copy.serial_no}'`;
+            const addTable = `insert into register values(${book_copy.serial_no},'borrow','${user_name}');`;
+            this.createTransaction([
+              this.database.run(updateTable),
+              this.database.run(addTable),
+            ]);
             return `${book_copy.serial_no}`;
-          })
-          .then((serial_no) => {
-            this.insertInTable("register", [serial_no, "borrow", user_name]);
-            return serial_no;
           })
           .then((serial_no) =>
             resolve(
-              `borrow successful\n  title : ${row.title}\n  user  : ${user_name}\n  serial_no : ${serial_no}`
+              `borrow successful: {title : ${row.title}, user : ${user_name}, serial_no : ${serial_no}}`
             )
           )
           .catch((err) =>
@@ -103,14 +108,20 @@ class Database {
     });
   }
 
-  return(user_name, serial_no) {
+  updateBorrowedBook(user_name, serial_no) {
     const schema = `select * from book_copies where serial_no='${serial_no}' and is_available='false';`;
     return new Promise((resolve, reject) => {
-      this.select(schema)
+      this.getAll(schema)
         .then((row) => {
-          this.updateBookAvailability(row.serial_no, "true");
-          this.insertInTable("register", [serial_no, "return", user_name]);
-          resolve("return successful");
+          const updateTable = `update book_copies set is_available = 'true' where serial_no='${row.serial_no}'`;
+          const addTable = `insert into register values(${row.serial_no},'return','${user_name}');`;
+          this.createTransaction([
+            this.database.run(updateTable),
+            this.database.run(addTable),
+          ]);
+          resolve(
+            `return successful:{user_name : ${user_name},serial_no : ${row.serial_no}}`
+          );
         })
         .catch(() => reject("Book was not taken"));
     });
