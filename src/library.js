@@ -49,7 +49,7 @@ class Library {
     return this.db.updateBorrowedBook(user, serial_no);
   }
 
-  show({ table }) {
+  show(table) {
     return new Promise((resolve, reject) =>
       this.db.selectAll(table, (err, rows) => {
         if (!err) {

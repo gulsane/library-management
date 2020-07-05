@@ -1,5 +1,5 @@
-const Sqlite = require("sqlite3");
-const { books_select } = require("./schema");
+const Sqlite = require('sqlite3');
+const { books_select } = require('./schema');
 
 class Database {
   constructor(path) {
@@ -11,16 +11,16 @@ class Database {
     return new Promise((resolve, reject) => {
       this.database.run(schema, (err) => {
         if (err) reject(err);
-        resolve("OK");
+        resolve('OK');
       });
     });
   }
 
   insertInTable(table, values) {
     const schema = `insert into ${table} values (`;
-    const valueAsString = values.map((e) => `'${e}'`).join(",");
+    const valueAsString = values.map((e) => `'${e}'`).join(',');
     return new Promise((resolve, reject) => {
-      this.database.run(schema.concat(valueAsString, ");"), (err) => {
+      this.database.run(schema.concat(valueAsString, ');'), (err) => {
         if (err) reject(err);
         resolve();
       });
@@ -30,7 +30,7 @@ class Database {
   getSerialNumber() {
     return new Promise((resolve, reject) => {
       this.database.get(
-        "SELECT MAX(serial_no) as serial_number from book_copies;",
+        'SELECT MAX(serial_no) as serial_number from book_copies;',
         (err, row) => {
           if (err) reject(err);
           resolve(row.serial_number);
@@ -55,14 +55,14 @@ class Database {
     return new Promise((resolve, reject) => {
       this.database.get(schema, (err, row) => {
         if (err) reject(err);
-        if (!row) reject("Book not found");
+        if (!row) reject('Book not found');
         resolve(row);
       });
     });
   }
 
   createTransaction(operations) {
-    const operationsList = operations.join(";");
+    const operationsList = operations.join(';');
     const transaction = `BEGIN TRANSACTION; ${operationsList}; COMMIT;`;
     return transaction;
   }
@@ -73,7 +73,7 @@ class Database {
       searchOptions.push(`${option}=='${options[option]}'`);
     }
     return `select * from (${books_select}) where ${searchOptions.join(
-      " and "
+      ' and '
     )};`;
   }
 
@@ -101,7 +101,7 @@ class Database {
           .catch((err) =>
             reject(
               err ||
-                "Book not available\n\nPlease take a look on available books by using command :-\n * show"
+                'Book not available\n\nPlease take a look on available books by using command :-\n * show'
             )
           );
       });
@@ -123,14 +123,13 @@ class Database {
             `return successful:{user_name : ${user_name},serial_no : ${row.serial_no}}`
           );
         })
-        .catch(() => reject("Book was not taken"));
+        .catch(() => reject('Book was not taken'));
     });
   }
 
-  selectAll(tableName, callback) {
-    const schema = !tableName
-      ? `${books_select};`
-      : `select * from ${tableName};`;
+  selectAll(table, callback) {
+    const schema =
+      table === 'all books' ? `${books_select};` : `select * from ${table};`;
     return this.database.all(schema, callback);
   }
 }

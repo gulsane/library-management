@@ -51,21 +51,28 @@ const startManagement = function (library) {
       .catch(callback);
   });
 
-  vorpal
-    .command('show [table]')
-    .autocomplete(['books', 'book_copies', 'register'])
-    .action(function (args, callback) {
-      library
-        .show(args)
-        .then((rows) => {
-          console.table(rows);
-          callback();
-        })
-        .catch((msg) => {
-          this.log(msg);
-          callback();
-        });
-    });
+  vorpal.command('show').action(function (argument, callback) {
+    this.prompt(prompts.showTable)
+      .then(({ table }) => library.show(table))
+      .then((rows) => {
+        console.table(rows);
+        callback();
+      })
+      .catch(callback);
+  });
+  // .autocomplete(['books', 'book_copies', 'register'])
+  // .action(function (args, callback) {
+  //   library
+  //     .show(args)
+  //     .then((rows) => {
+  //       console.table(rows);
+  //       callback();
+  //     })
+  //     .catch((msg) => {
+  //       this.log(msg);
+  //       callback();
+  //     });
+  // });
 };
 
 module.exports = { startManagement };

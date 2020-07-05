@@ -49,4 +49,13 @@ const returnBook = [
   }
 ];
 
-module.exports = {addBook, addCopy, returnBook};
+const showTable = [
+  {
+    name: 'table',
+    message: 'select a table to see : ',
+    type: 'list',
+    choices: ['all books', 'book_copies', 'register']
+  }
+]
+
+module.exports = {addBook, addCopy, returnBook, showTable};
