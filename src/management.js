@@ -1,46 +1,33 @@
-const vorpal = require("vorpal")();
+const vorpal = require('vorpal')();
+const prompts = require('../src/prompt');
 
 const startManagement = function (library) {
-  vorpal.delimiter(vorpal.chalk.cyan("library-management $")).show();
+  vorpal.delimiter(vorpal.chalk.cyan('library-management $')).show();
 
-  vorpal
-    .command("add new book <ISBN> <title> <category> <author>")
-    .action(function (argument, callback) {
-      library
-        .addBook(argument)
-        .then((msg) => {
-          this.log(msg);
-          callback();
-        })
-        .catch((msg) => {
-          this.log(msg);
-          callback();
-        });
-    });
+  vorpal.command('add book').action(function (argument, callback) {
+    this.prompt(prompts.addBook)
+      .then((book) => library.addBook(book))
+      .then(callback)
+      .catch(callback);
+  });
 
-  vorpal.command("add copy <ISBN>").action(function (argument, callback) {
-    library
-      .addCopy(argument)
-      .then((msg) => {
-        this.log(msg);
-        callback();
-      })
-      .catch((msg) => {
-        this.log(msg);
-        callback();
-      });
+  vorpal.command('add copy').action(function (argument, callback) {
+    this.prompt(prompts.addCopy)
+      .then(({ isbn }) => library.addCopy(isbn))
+      .then(callback)
+      .catch(callback);
   });
 
   vorpal
     .command(
-      "borrow <user_name>",
-      "at least one optional command needed for borrow command"
+      'borrow <user_name>',
+      'at least one optional command needed for borrow command'
     )
-    .option("-i, --ISBN <book_isbn>")
-    .option("-t, --title <book_name>")
+    .option('-i, --ISBN <book_isbn>')
+    .option('-t, --title <book_name>')
     .validate((args) => {
       if (Object.values(args.options).length) return true;
-      return "missing arguments to borrow command";
+      return 'missing arguments to borrow command';
     })
     .action(function (argument, callback) {
       library
@@ -50,32 +37,23 @@ const startManagement = function (library) {
           callback();
         })
         .catch((msg) => {
-          this.log(msg || "borrow unsuccessful");
+          this.log(msg || 'borrow unsuccessful');
           callback();
         });
     });
 
-  vorpal
-    .command(
-      "return <user_name> <serial_no>",
-      "serial number needed to return a book"
-    )
-    .action(function (argument, callback) {
-      library
-        .returnBook(argument)
-        .then((msg) => {
-          this.log(msg);
-          callback();
-        })
-        .catch((msg) => {
-          this.log(msg || "return unsuccessful");
-          callback();
-        });
-    });
+  vorpal.command('return book').action(function (argument, callback) {
+    this.prompt(prompts.returnBook)
+      .then(({ user, serial_no }) => {
+        library.returnBook(user, serial_no);
+      })
+      .then(callback)
+      .catch(callback);
+  });
 
   vorpal
-    .command("show [table]")
-    .autocomplete(["books", "book_copies", "register"])
+    .command('show [table]')
+    .autocomplete(['books', 'book_copies', 'register'])
     .action(function (args, callback) {
       library
         .show(args)

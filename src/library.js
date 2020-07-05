@@ -1,42 +1,42 @@
-const DataBase = require("./database").Database;
+const DataBase = require('./database').Database;
 const {
   books_table_schema,
   copies_table_schema,
   log_table_schema,
-} = require("./schema");
+} = require('./schema');
 
 class Library {
   constructor(path) {
     this.db = new DataBase(path);
   }
 
-  addBook({ ISBN, title, category, author }) {
+  addBook({ isbn, title, category, author }) {
     return new Promise((resolve, reject) => {
       this.db.getSerialNumber().then((serial_number) => {
         const serial_no = serial_number == null ? 1 : serial_number + 1;
         this.db
-          .insertInTable("books", [ISBN, title, category, author])
+          .insertInTable('books', [isbn, title, category, author])
           .then(() =>
-            this.db.insertInTable("book_copies", [ISBN, serial_no, true])
+            this.db.insertInTable('book_copies', [isbn, serial_no, true])
           )
-          .then(() => resolve({ ISBN, title, category, author }))
+          .then(() => resolve({ isbn, title, category, author }))
           .catch((msg) => reject(`error happened with msg : ${msg}`));
       });
     });
   }
 
-  addCopy({ ISBN }) {
+  addCopy(isbn) {
     return new Promise((resolve, reject) => {
-      this.db.isIsbnAvailable(ISBN).then(() => {
+      this.db.isIsbnAvailable(isbn).then(() => {
         this.db
           .getSerialNumber()
           .then((serial_number) => {
             const serial_no = serial_number == null ? 1 : serial_number + 1;
             this.db
-              .insertInTable("book_copies", [ISBN, serial_no, true])
-              .then(() => resolve({ ISBN }));
+              .insertInTable('book_copies', [isbn, serial_no, true])
+              .then(() => resolve({ isbn }));
           })
-          .catch(() => reject("ISBN not available"));
+          .catch(() => reject('ISBN not available'));
       });
     });
   }
@@ -45,8 +45,8 @@ class Library {
     return this.db.borrow(user_name, options);
   }
 
-  returnBook({ user_name, serial_no }) {
-    return this.db.updateBorrowedBook(user_name, serial_no);
+  returnBook(user, serial_no ) {
+    return this.db.updateBorrowedBook(user, serial_no);
   }
 
   show({ table }) {
