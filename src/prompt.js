@@ -58,4 +58,33 @@ const showTable = [
   }
 ]
 
-module.exports = {addBook, addCopy, returnBook, showTable};
+const borrowBook = [
+  {
+    name: 'user',
+    message: 'Enter name  : ',
+    type: 'text',
+    validate: (str) => Boolean(str),
+  },
+  {
+    name: 'info',
+    message: 'select a detail you can give',
+    type: 'list',
+    choices: ['ISBN', 'title'],
+  },
+  {
+    name: 'ISBN',
+    message: 'ISBN number : ',
+    type: 'text',
+    when: ({ info }) => info == 'ISBN',
+    validate: (str) => Boolean(str),
+  },
+  {
+    name: 'title',
+    message: 'title : ',
+    type: 'text',
+    when: ({ info }) => info == 'title',
+    validate: (str) => Boolean(str),
+  },
+];
+
+module.exports = {addBook, addCopy, borrowBook, returnBook, showTable};

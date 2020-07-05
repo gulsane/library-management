@@ -41,8 +41,8 @@ class Library {
     });
   }
 
-  borrowBook({ user_name, options }) {
-    return this.db.borrow(user_name, options);
+  borrowBook(details) {
+    return this.db.borrow(details);
   }
 
   returnBook(user, serial_no ) {

@@ -67,18 +67,13 @@ class Database {
     return transaction;
   }
 
-  getAvailableBooksQuery(options) {
-    let searchOptions = [];
-    for (let option in options) {
-      searchOptions.push(`${option}=='${options[option]}'`);
-    }
-    return `select * from (${books_select}) where ${searchOptions.join(
-      ' and '
-    )};`;
+  getAvailableBooksQuery(info, isbn, title) {
+    return `select * from (${books_select}) where ${info}=='${isbn || title}';`;
   }
 
-  borrow(user_name, options) {
-    const availableBooksQuery = this.getAvailableBooksQuery(options);
+  borrow({ user, info, ISBN, title }) {
+    const availableBooksQuery = this.getAvailableBooksQuery(info, ISBN, title);
+    console.log(availableBooksQuery);
     return new Promise((resolve, reject) => {
       this.getAll(availableBooksQuery).then((row) => {
         const isBookAvailable = `select * from book_copies where ISBN='${row.ISBN}' and is_available='true';`;
@@ -86,7 +81,7 @@ class Database {
         this.getAll(isBookAvailable)
           .then((book_copy) => {
             const updateTable = `update book_copies set is_available = 'false' where serial_no='${book_copy.serial_no}'`;
-            const addTable = `insert into register values(${book_copy.serial_no},'borrow','${user_name}');`;
+            const addTable = `insert into register values(${book_copy.serial_no},'borrow','${user}');`;
             this.createTransaction([
               this.database.run(updateTable),
               this.database.run(addTable),
@@ -95,7 +90,7 @@ class Database {
           })
           .then((serial_no) =>
             resolve(
-              `borrow successful: {title : ${row.title}, user : ${user_name}, serial_no : ${serial_no}}`
+              `borrow successful: {title : ${row.title}, user : ${user}, serial_no : ${serial_no}}`
             )
           )
           .catch((err) =>

@@ -18,29 +18,14 @@ const startManagement = function (library) {
       .catch(callback);
   });
 
-  vorpal
-    .command(
-      'borrow <user_name>',
-      'at least one optional command needed for borrow command'
-    )
-    .option('-i, --ISBN <book_isbn>')
-    .option('-t, --title <book_name>')
-    .validate((args) => {
-      if (Object.values(args.options).length) return true;
-      return 'missing arguments to borrow command';
-    })
-    .action(function (argument, callback) {
-      library
-        .borrowBook(argument)
-        .then((msg) => {
-          this.log(msg);
-          callback();
-        })
-        .catch((msg) => {
-          this.log(msg || 'borrow unsuccessful');
-          callback();
-        });
-    });
+  vorpal.command('borrow').action(function (argument, callback) {
+    this.prompt(prompts.borrowBook)
+      .then((details) => {
+        library.borrowBook(details);
+      })
+      .then(callback)
+      .catch(callback);
+  });
 
   vorpal.command('return book').action(function (argument, callback) {
     this.prompt(prompts.returnBook)
@@ -60,19 +45,6 @@ const startManagement = function (library) {
       })
       .catch(callback);
   });
-  // .autocomplete(['books', 'book_copies', 'register'])
-  // .action(function (args, callback) {
-  //   library
-  //     .show(args)
-  //     .then((rows) => {
-  //       console.table(rows);
-  //       callback();
-  //     })
-  //     .catch((msg) => {
-  //       this.log(msg);
-  //       callback();
-  //     });
-  // });
 };
 
 module.exports = { startManagement };
