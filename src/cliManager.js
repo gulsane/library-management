@@ -1,8 +1,8 @@
 const vorpal = require("vorpal")();
 const prompts = require("../src/prompt");
 
-const startManagement = function (library) {
-  vorpal.delimiter(vorpal.chalk.cyan("library-management $")).show();
+const startCli = function (library) {
+  vorpal.delimiter(vorpal.chalk.cyan("library $ ")).show();
 
   vorpal.command("add book").action(function (argument, callback) {
     this.prompt(prompts.addBook)
@@ -13,7 +13,7 @@ const startManagement = function (library) {
 
   vorpal.command("add copy").action(function (argument, callback) {
     this.prompt(prompts.addCopy)
-      .then(({ isbn }) => library.addCopy(isbn))
+      .then(({isbn}) => library.addCopy(isbn))
       .then(callback)
       .catch(callback);
   });
@@ -29,7 +29,7 @@ const startManagement = function (library) {
 
   vorpal.command("return book").action(function (argument, callback) {
     this.prompt(prompts.returnBook)
-      .then(({ user, serial_no }) => {
+      .then(({user, serial_no}) => {
         library.returnBook(user, serial_no);
       })
       .then(callback)
@@ -38,7 +38,7 @@ const startManagement = function (library) {
 
   vorpal.command("show").action(function (argument, callback) {
     this.prompt(prompts.showTable)
-      .then(({ table }) => library.show(table))
+      .then(({table}) => library.show(table))
       .then((rows) => {
         console.table(rows);
         callback();
@@ -47,4 +47,4 @@ const startManagement = function (library) {
   });
 };
 
-module.exports = { startManagement };
+module.exports = {startCli};

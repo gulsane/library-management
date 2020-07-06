@@ -1,9 +1,13 @@
-const { Library } = require("./src/library");
-const { startManagement } = require("./src/management");
+const Sqlite3 = require("sqlite3");
+const {Library} = require("./src/library");
+const {startCli} = require("./src/cliManager");
+const {Sql} = require("./src/sql");
 
 const main = function () {
-  const library = Library.init("./library.db");
-  startManagement(library);
+  const db = new Sqlite3.Database("./library.db");
+  const sql = Sql.init(db);
+  const library = new Library(sql);
+  startCli(library);
 };
 
 main();
