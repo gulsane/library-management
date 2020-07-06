@@ -1,6 +1,6 @@
 const Sqlite = require("sqlite3");
 const { books_select } = require("./schema");
-const { createTransaction } = require("./actions");
+const { createTransaction, selectBooks } = require("./actions");
 class Database {
   constructor(path) {
     this.path = path;
@@ -55,28 +55,6 @@ class Database {
         if (err) reject(err);
         if (!row) reject("Book not found");
         resolve(row);
-      });
-    });
-  }
-
-
-  borrow({ user, info, ISBN, title }) {
-    const availableBooksQuery = this.getAvailableBooksQuery(info, ISBN, title);
-    return new Promise((resolve, reject) => {
-      this.getAll(availableBooksQuery).then((row) => {
-        const isBookAvailable = `select * from book_copies where ISBN='${row.ISBN}' and is_available='true';`;
-
-        this.getAll(isBookAvailable).then((book_copy) => {
-          const updateTable = `update book_copies set is_available = 'false' where serial_no='${book_copy.serial_no}'`;
-          const addTable = `insert into register values(${book_copy.serial_no},'borrow','${user}')`;
-          const transaction = createTransaction([updateTable, addTable]);
-          this.executeTransaction(transaction, {
-            msg: "borrow successful",
-            title: row.title,
-            user,
-            serial_no: book_copy.serial_no,
-          });
-        });
       });
     });
   }
