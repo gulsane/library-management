@@ -19,8 +19,19 @@ const selectAvailableCopies = function (isbn) {
   return `select * from book_copies where ISBN='${isbn}' and is_available='true';`;
 };
 
-const getUpdateTable = function (serial_number) {
-  return `update book_copies set is_available = 'false' where serial_no='${serial_number}'`;
+const updateBookState = function (serial_number, state) {
+  return `update book_copies set is_available = '${state}' where serial_no='${serial_number}'`;
 };
 
-module.exports = { getInsertQuery, createTransaction, selectBooks, selectAvailableCopies, getUpdateTable, };
+const selectBorrowedCopy = function (serial_number) {
+  return `select * from book_copies where serial_no='${serial_number}' and is_available='false';`;
+};
+
+module.exports = {
+  getInsertQuery,
+  createTransaction,
+  selectBooks,
+  selectAvailableCopies,
+  updateBookState,
+  selectBorrowedCopy,
+};

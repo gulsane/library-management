@@ -59,22 +59,6 @@ class Database {
     });
   }
 
-  updateBorrowedBook(user, serial_no) {
-    const schema = `select * from book_copies where serial_no='${serial_no}' and is_available='false';`;
-    return new Promise((resolve, reject) => {
-      this.getAll(schema).then((row) => {
-        const updateTable = `update book_copies set is_available = 'true' where serial_no='${row.serial_no}'`;
-        const addTable = `insert into register values(${row.serial_no},'return','${user}');`;
-        const transaction = createTransaction([updateTable, addTable]);
-        this.executeTransaction(transaction, {
-          msg: "return successful",
-          user,
-          serial_no: row.serial_no,
-        });
-      });
-    });
-  }
-
   selectAll(table, callback) {
     const schema =
       table === "all books" ? `${books_select};` : `select * from ${table};`;
