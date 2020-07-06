@@ -2,7 +2,7 @@
 // drop table if exists books;
 // drop table if exists book_copies;
 module.exports = {
-  books_table_schema: `
+  books: `
   create table if not exists books (
     ISBN varchar(20) Not null UNIQUE,
     title varchar(50) Not null,
@@ -10,14 +10,14 @@ module.exports = {
     author VARCHAR(20) DEFAULT 'unknown'
   );`,
 
-  copies_table_schema: `
+  copies: `
   create table if not exists book_copies (
     ISBN varchar(20) Not null,
     serial_no NUMERIC(5) not NULL,
     is_available NUMERIC(1)
   );`,
 
-  log_table_schema: `
+  register: `
   create table if not exists register (
     serial_no NUMERIC(5) not null,
     action VARCHAR(10) not null,
