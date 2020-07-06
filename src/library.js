@@ -8,11 +8,11 @@ const {
 } = require("./actions");
 
 class Library {
-  constructor (db) {
+  constructor(db) {
     this.db = db;
   }
 
-  async addBook({isbn, title, category, author}) {
+  async addBook({ isbn, title, category, author }) {
     const serial_number = await this.db.getSerialNumber();
     const serial_no = serial_number == null ? 1 : serial_number + 1;
     const updateBooks = getInsertQuery("books", [
@@ -41,11 +41,11 @@ class Library {
         true,
       ]);
       const transaction = createTransaction([updateCopies]);
-      return this.db.executeTransaction(transaction, {isbn});
+      return this.db.executeTransaction(transaction, { isbn });
     }
   }
 
-  async borrowBook({user, info, ISBN, title}) {
+  async borrowBook({ user, info, ISBN, title }) {
     const availableBooksQuery = selectBooks(info, ISBN, title);
     const rows = await this.db.getAll(availableBooksQuery);
     const availableCopyQuery = selectAvailableCopies(rows.ISBN);
@@ -93,4 +93,4 @@ class Library {
   }
 }
 
-module.exports = {Library};
+module.exports = { Library };

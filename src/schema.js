@@ -1,6 +1,3 @@
-// drop table if exists register;
-// drop table if exists books;
-// drop table if exists book_copies;
 module.exports = {
   books: `
   create table if not exists books (
@@ -23,16 +20,4 @@ module.exports = {
     action VARCHAR(10) not null,
     user_name VARCHAR(20)
   );`,
-
-  books_select: `
-  SELECT  books.ISBN
-       ,books.title
-       ,books.category
-       ,books.author
-       ,count(*) as books_count
-       ,count(*) FILTER(WHERE book_copies.is_available = 'true') as available 
-       from books
-       join book_copies
-on books.ISBN = book_copies.ISBN
-group by books.ISBN`,
 };

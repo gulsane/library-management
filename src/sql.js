@@ -1,6 +1,7 @@
+const { selectAllBooks } = require("./actions");
 const schemas = require("./schema");
 class Sql {
-  constructor (db) {
+  constructor(db) {
     this.db = db;
   }
 
@@ -46,13 +47,10 @@ class Sql {
 
   isIsbnAvailable(ISBN) {
     return new Promise((resolve, reject) => {
-      this.db.all(
-        `select * from books where ISBN='${ISBN}'`,
-        (err, rows) => {
-          if (rows.length === 0) reject(false);
-          resolve(true);
-        }
-      );
+      this.db.all(`select * from books where ISBN='${ISBN}'`, (err, rows) => {
+        if (rows.length === 0) reject(false);
+        resolve(true);
+      });
     });
   }
 
@@ -67,10 +65,11 @@ class Sql {
   }
 
   selectAll(table, callback) {
-    const schema =
-      table === "all books" ? `${schemas.books_select};` : `select * from ${table};`;
-    return this.db.all(schema, callback);
+    const allBooksQuery = selectAllBooks();
+    const query =
+      table === "all books" ? `${allBooksQuery};` : `select * from ${table};`;
+    return this.db.all(query, callback);
   }
 }
 
-module.exports = {Sql};
+module.exports = { Sql };
