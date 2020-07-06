@@ -80,18 +80,18 @@ class Database {
         this.getAll(isBookAvailable)
           .then((book_copy) => {
             const updateTable = `update book_copies set is_available = 'false' where serial_no='${book_copy.serial_no}'`;
-            const addTable = `insert into register values(${book_copy.serial_no},'borrow','${user}');`;
-            this.createTransaction([
-              this.database.run(updateTable),
-              this.database.run(addTable),
-            ]);
-            return `${book_copy.serial_no}`;
-          })
-          .then((serial_no) =>
-            resolve(
-              `borrow successful: {title : ${row.title}, user : ${user}, serial_no : ${serial_no}}`
-            )
-          )
+            const addTable = `insert into register values(${book_copy.serial_no},'borrow','${user}')`;
+            const transaction = this.createTransaction([updateTable, addTable]);
+            this.database.exec(transaction, (err) => {
+              if (err) reject(err);
+              resolve({
+                msg: "borrow successful",
+                title: row.title,
+                user,
+                serial_no: book_copy.serial_no,
+              });
+            });
+          }) //have to look once again;
           .catch((err) =>
             reject(
               err ||
@@ -102,20 +102,22 @@ class Database {
     });
   }
 
-  updateBorrowedBook(user_name, serial_no) {
+  updateBorrowedBook(user, serial_no) {
     const schema = `select * from book_copies where serial_no='${serial_no}' and is_available='false';`;
     return new Promise((resolve, reject) => {
       this.getAll(schema)
         .then((row) => {
           const updateTable = `update book_copies set is_available = 'true' where serial_no='${row.serial_no}'`;
-          const addTable = `insert into register values(${row.serial_no},'return','${user_name}');`;
-          this.createTransaction([
-            this.database.run(updateTable),
-            this.database.run(addTable),
-          ]);
-          resolve(
-            `return successful:{user_name : ${user_name},serial_no : ${row.serial_no}}`
-          );
+          const addTable = `insert into register values(${row.serial_no},'return','${user}');`;
+          const transaction = this.createTransaction([updateTable, addTable]);
+          this.database.exec(transaction, (err) => {
+            if (err) reject(err);
+            resolve({
+              msg: "return successful",
+              user,
+              serial_no: row.serial_no,
+            });
+          });
         })
         .catch(() => reject("Book was not taken"));
     });
