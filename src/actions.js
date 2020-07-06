@@ -9,4 +9,8 @@ const createTransaction = function (operations) {
   return transaction;
 };
 
-module.exports = { getInsertQuery, createTransaction };
+const getAvailableBooksQuery = function (info, isbn, title) {
+  return `select * from (${books_select}) where ${info}=='${isbn || title}';`;
+};
+
+module.exports = { getInsertQuery, createTransaction, getAvailableBooksQuery };

@@ -25,17 +25,6 @@ class Database {
     });
   }
 
-  insertInTable(table, values) {
-    const schema = `insert into ${table} values (`;
-    const valueAsString = values.map((e) => `'${e}'`).join(",");
-    return new Promise((resolve, reject) => {
-      this.database.run(schema.concat(valueAsString, ");"), (err) => {
-        if (err) reject(err);
-        resolve();
-      });
-    });
-  }
-
   getSerialNumber() {
     return new Promise((resolve, reject) => {
       this.database.get(
@@ -70,9 +59,6 @@ class Database {
     });
   }
 
-  getAvailableBooksQuery(info, isbn, title) {
-    return `select * from (${books_select}) where ${info}=='${isbn || title}';`;
-  }
 
   borrow({ user, info, ISBN, title }) {
     const availableBooksQuery = this.getAvailableBooksQuery(info, ISBN, title);
