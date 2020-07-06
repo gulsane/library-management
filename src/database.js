@@ -36,11 +36,16 @@ class Database {
     });
   }
 
-  async getSerialNumber() {
-    const row = await this.database.get(
-      "SELECT MAX(serial_no) as serial_number from book_copies;"
-    );
-    if (row) return row.serial_no;
+  getSerialNumber() {
+    return new Promise((resolve, reject) => {
+      this.database.get(
+        "SELECT MAX(serial_no) as serial_number from book_copies;",
+        (err, row) => {
+          if (row) resolve(row.serial_number);
+          reject(err);
+        }
+      );
+    });
   }
 
   isIsbnAvailable(ISBN) {

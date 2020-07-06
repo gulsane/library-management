@@ -10,36 +10,20 @@ class Library {
   async addBook({ isbn, title, category, author }) {
     const serial_number = await this.db.getSerialNumber();
     const serial_no = serial_number == null ? 1 : serial_number + 1;
-    const updateBooks = getInsertQuery("books", [
-      isbn,
-      title,
-      category,
-      author,
-    ]);
+    const updateBooks = getInsertQuery("books", [ isbn, title, category, author, ]);
     const updateCopies = getInsertQuery("book_copies", [isbn, serial_no, true]);
     const transaction = createTransaction([updateBooks, updateCopies]);
-    return this.db.executeTransaction(transaction, {
-      isbn,
-      title,
-      category,
-      author,
-    });
+    return this.db.executeTransaction(transaction, { isbn, title, category, author, });
   }
 
-  addCopy(isbn) {
-    return new Promise((resolve, reject) => {
-      this.db.isIsbnAvailable(isbn).then(() => {
-        this.db
-          .getSerialNumber()
-          .then((serial_number) => {
-            const serial_no = serial_number == null ? 1 : serial_number + 1;
-            this.db
-              .insertInTable("book_copies", [isbn, serial_no, true])
-              .then(() => resolve({ isbn }));
-          })
-          .catch(() => reject("ISBN not available"));
-      });
-    });
+  async addCopy(isbn) {
+    if (await this.db.isIsbnAvailable(isbn)) {
+      const serial_number = await this.db.getSerialNumber();
+      const serial_no = serial_number == null ? 1 : serial_number + 1;
+      const updateCopies = getInsertQuery("book_copies", [ isbn, serial_no, true, ]);
+      const transaction = createTransaction([updateCopies]);
+      return this.db.executeTransaction(transaction, { isbn });
+    }
   }
 
   borrowBook(details) {

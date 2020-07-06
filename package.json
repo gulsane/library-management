@@ -4,7 +4,7 @@
   "description": "",
   "main": "library.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "rm *.db && node main.js"
   },
   "repository": {
     "type": "git",
