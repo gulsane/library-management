@@ -36,14 +36,14 @@ const addCopy = [
 
 const returnBook = [
   {
-    name: 'user',
-    message: 'Enter name           : ',
+    name: 'serial_no',
+    message: 'Book\'s serial number : ',
     type: 'text',
     validate: (str) => Boolean(str),
   },
   {
-    name: 'serial_no',
-    message: 'Book\'s serial number : ',
+    name: 'user',
+    message: 'Enter name            : ',
     type: 'text',
     validate: (str) => Boolean(str),
   }
