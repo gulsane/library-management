@@ -1,4 +1,3 @@
-const { selectAllBooks } = require("./actions");
 const schemas = require("./schema");
 
 class Sql {
@@ -10,7 +9,7 @@ class Sql {
     return new Promise((resolve, reject) => {
       this.db.run(schema, (err) => {
         if (err) reject(err);
-        resolve("OK");
+        resolve({msg:'table created successfully'});
       });
     });
   }
@@ -63,13 +62,6 @@ class Sql {
         resolve(row);
       });
     });
-  }
-
-  selectAll(table, callback) {
-    const allBooksQuery = selectAllBooks();
-    const query =
-      table === "all books" ? `${allBooksQuery};` : `select * from ${table};`;
-    return this.db.all(query, callback);
   }
 }
 
