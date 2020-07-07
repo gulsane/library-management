@@ -1,55 +1,39 @@
-const Vorpal = require('vorpal');
-const prompts = require('../src/prompt');
-const { giveBorrower } = require('../cli/borrowerCli');
-const { giveLibrarian } = require('../cli/librarianCli');
-// const library = require('../src/library');
-let instances;
+const Vorpal = require("vorpal");
+const prompts = require("../src/prompt");
+const { giveBorrower } = require("../cli/borrowerCli");
+const { giveLibrarian } = require("../cli/librarianCli");
+let interfaceInstances;
 
-const toggle = function (vorpal) {
-  vorpal.command('toggle <instance>').action(function (args, cb) {
-    instances[args.instance].show();
+const logout = function (vorpal) {
+  vorpal.command("logout").action(function (args, cb) {
+    interfaceInstances.ourLibrary.show();
     cb();
   });
   return vorpal;
 };
 
-const ourLibrary = new Vorpal();
-ourLibrary.use(toggle).delimiter('library $ ').show();
-
 const startCli = function (library, sqlite) {
-  new_library = library;
+  const ourLibrary = new Vorpal();
+  ourLibrary.delimiter("library $ ").show();
 
-  ourLibrary.command('show').action(function (argument, callback) {
-    this.prompt(prompts.showTable)
-      .then(({ table }) => library.show(sqlite, table))
-      .then((rows) => {
-        console.table(rows);
-        callback();
-      })
-      .catch(callback);
+  ourLibrary.command("login").action(function (argument, callback) {
+    this.prompt(prompts.login)
+      .then(({ domain }) => interfaceInstances[domain].show())
+      .then(()=>callback())
+      .catch(()=>callback());
   });
 
-  ourLibrary.command('search').action(function (argument, callback) {
-    this.prompt(prompts.search)
-      .then((info) => library.search(sqlite, info))
-      .then((rows) => {
-        console.table(rows);
-        callback();
-      })
-      .catch(callback);
-  });
-
-  instances = {
+  interfaceInstances = {
     ourLibrary,
-    borrower: giveBorrower(library,sqlite)
-      .use(toggle)
-      .delimiter('Library-Borrower-section $ ')
+    borrower: giveBorrower(library, sqlite)
+      .use(logout)
+      .delimiter("Library-Borrower-section $ ")
       .show(),
-    librarian: giveLibrarian(library,sqlite)
-      .use(toggle)
-      .delimiter('Library-librarian-section $ ')
+    librarian: giveLibrarian(library, sqlite)
+      .use(logout)
+      .delimiter("Library-librarian-section $ ")
       .show(),
   };
 };
 
-module.exports = { startCli, toggle };
+module.exports = { startCli };

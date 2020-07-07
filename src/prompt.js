@@ -124,4 +124,14 @@ const search = [
   }
 ]
 
-module.exports = {addBook, addCopy, borrowBook, returnBook, showTable, search};
+const login = [
+  {
+    name: 'domain',
+    message: 'Select your designation :',
+    type: 'list',
+    choices: ['librarian', 'borrower']
+  }
+]
+
+
+module.exports = {addBook, addCopy, borrowBook, returnBook, showTable, search,login};

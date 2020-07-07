@@ -4,7 +4,6 @@ const { toggle } = require('./libraryCli');
 
 const giveBorrower = function (library,sqlite) {
   const borrower = new Vorpal();
-  // borrower.use(toggle).delimiter('Library-Borrower-section $ ').show();
 
   borrower.command('borrow book').action(function (argument, callback) {
     this.prompt(prompts.borrowBook)
@@ -21,6 +20,27 @@ const giveBorrower = function (library,sqlite) {
       .then(callback)
       .catch(callback);
   });
+
+  borrower.command("show").action(function (argument, callback) {
+    this.prompt(prompts.showTable)
+      .then(({ table }) => library.show(sqlite, table))
+      .then((rows) => {
+        console.table(rows);
+        callback();
+      })
+      .catch(callback);
+  });
+
+  borrower.command("search").action(function (argument, callback) {
+    this.prompt(prompts.search)
+      .then((info) => library.search(sqlite, info))
+      .then((rows) => {
+        console.table(rows);
+        callback();
+      })
+      .catch(callback);
+  });
+
   return borrower;
 };
 

@@ -81,27 +81,3 @@ step 3
 
 cli ---> user
       |--->librarian
-
-const Vorpal = require('vorpal');
-const mainVorpal = new Vorpal();
-// const path = require('path');
-// const fsAutocomplete = require('vorpal-autocomplete-fs');
-
-
-const swap = function(mainVorpal) {
-  mainVorpal
-    .command('swap <instance>')
-    .action(function (args, cb) {
-      instances[args.instance].show();
-      cb();
-    });
-  return mainVorpal;
-}
-const x = mainVorpal.delimiter('X:').use(swap).show();
-
-var instances = {
-  a: new Vorpal().delimiter('a:'),
-  b: new Vorpal().use(swap).delimiter('b:'),
-  c: new Vorpal().use(swap).delimiter('c:'),
-  x
-};
