@@ -1,6 +1,6 @@
 const Sqlite3 = require("sqlite3");
 const {Library} = require("./src/library");
-const {startCli} = require("./src/cliManager");
+const {startCli} = require("./cli/libraryCli");
 const {Sql} = require("./src/sql");
 
 const main = function () {
