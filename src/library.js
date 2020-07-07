@@ -47,19 +47,15 @@ class Library {
 
   async borrowBook({ user, info, ISBN, title }) {
     const availableBooksQuery = selectBooks(info, ISBN, title);
-    const rows = await this.db.getAll(availableBooksQuery);
-    const availableCopyQuery = selectAvailableCopies(rows.ISBN);
-    const bookCopy = await this.db.getAll(availableCopyQuery);
+    const [row] = await this.db.getAll(availableBooksQuery,{msg:'Book not available in library'});
+    const availableCopyQuery = selectAvailableCopies(row.ISBN);
+    const [bookCopy] = await this.db.getAll(availableCopyQuery,{msg:'Currently no copy available of this book'});
     const updateTable = updateBookState(bookCopy.serial_no, false);
-    const addTable = getInsertQuery("register", [
-      bookCopy.serial_no,
-      "borrow",
-      user,
-    ]);
+    const addTable = getInsertQuery("register", [ bookCopy.serial_no, "borrow", user, ]);
     const transaction = createTransaction([updateTable, addTable]);
     return this.db.executeTransaction(transaction, {
       msg: "borrow successful",
-      title: rows.title,
+      title: row.title,
       user,
       serial_no: bookCopy.serial_no,
     });
@@ -67,7 +63,10 @@ class Library {
 
   async returnBook(user, serial_no) {
     const borrowedBookQuery = selectBorrowedCopy(serial_no);
-    const borrowedBook = await this.db.getAll(borrowedBookQuery);
+    const [borrowedBook] = await this.db.getAll(
+      borrowedBookQuery,
+      {msg:'Book was not taken from library'}
+    );
     const updateTable = updateBookState(borrowedBook.serial_no, true);
     const addTable = getInsertQuery("register", [
       borrowedBook.serial_no,
@@ -93,7 +92,10 @@ class Library {
   }
 
   async search(info) {
-    return await this.db.search(info);
+    const booksQuery = selectBooks(info.key, info[info.key]);
+    return await this.db.getAll(booksQuery, {
+      msg: `${info.key} ${info[info.key]} not matched`,
+    });
   }
 }
 

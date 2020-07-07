@@ -43,7 +43,7 @@ const returnBook = [
   },
   {
     name: 'user',
-    message: 'Enter name            : ',
+    message: 'Enter name           : ',
     type: 'text',
     validate: (str) => Boolean(str),
   }

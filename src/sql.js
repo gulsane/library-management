@@ -1,6 +1,6 @@
 const { selectAllBooks } = require("./actions");
 const schemas = require("./schema");
-const {selectBooks} = require("./actions");
+
 class Sql {
   constructor(db) {
     this.db = db;
@@ -55,11 +55,11 @@ class Sql {
     });
   }
 
-  getAll(schema) {
+  getAll(schema, errMsg) {
     return new Promise((resolve, reject) => {
-      this.db.get(schema, (err, row) => {
+      this.db.all(schema, (err, row) => {
         if (err) reject(err);
-        if (!row) reject("Book not found");
+        if (!row.length) reject(errMsg);
         resolve(row);
       });
     });
@@ -70,18 +70,6 @@ class Sql {
     const query =
       table === "all books" ? `${allBooksQuery};` : `select * from ${table};`;
     return this.db.all(query, callback);
-  }
-
-  search(info) {
-    return new Promise((resolve, reject) => {
-      this.db.all(selectBooks(info.key, info[info.key]), [],
-        (err, rows) => {
-          if (err) reject(err);
-          if (!rows.length) reject({msg: `${info.key} ${info[info.key]} not matched`});
-          resolve(rows);
-        }
-      )
-    })
   }
 }
 
