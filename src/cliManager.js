@@ -41,6 +41,16 @@ const startCli = function (library) {
       })
       .catch(callback);
   });
+
+  vorpal.command("search").action(function (argument, callback) {
+    this.prompt(prompts.search)
+      .then((info) => library.search(info))
+      .then((rows) => {
+        console.table(rows);
+        callback();
+      })
+      .catch(callback);
+  })
 };
 
 module.exports = { startCli };

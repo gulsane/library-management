@@ -91,6 +91,10 @@ class Library {
       })
     );
   }
+
+  async search(info) {
+    return await this.db.search(info);
+  }
 }
 
 module.exports = { Library };

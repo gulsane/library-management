@@ -1,5 +1,6 @@
 const { selectAllBooks } = require("./actions");
 const schemas = require("./schema");
+const {selectBooks} = require("./actions");
 class Sql {
   constructor(db) {
     this.db = db;
@@ -69,6 +70,18 @@ class Sql {
     const query =
       table === "all books" ? `${allBooksQuery};` : `select * from ${table};`;
     return this.db.all(query, callback);
+  }
+
+  search(info) {
+    return new Promise((resolve, reject) => {
+      this.db.all(selectBooks(info.key, info[info.key]), [],
+        (err, rows) => {
+          if (err) reject(err);
+          if (!rows.length) reject({msg: `${info.key} ${info[info.key]} not matched`});
+          resolve(rows);
+        }
+      )
+    })
   }
 }
 

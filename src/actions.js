@@ -9,10 +9,8 @@ const createTransaction = function (operations) {
   return transaction;
 };
 
-const selectBooks = function (info, isbn, title) {
-  return `select * from (${selectAllBooks()}) where ${info}=='${
-    isbn || title
-  }';`;
+const selectBooks = function (key, value1, value2) {
+  return `select * from (${selectAllBooks()}) where ${key}=='${value1 || value2}';`;
 };
 
 const selectAvailableCopies = function (isbn) {
