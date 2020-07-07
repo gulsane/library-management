@@ -6,8 +6,8 @@ const {Sql} = require("./src/sql");
 const main = function () {
   const db = new Sqlite3.Database("./library.db");
   const sql = Sql.init(db);
-  const library = new Library(sql);
-  startCli(library);
+  const library = new Library();
+  startCli(library, sql);
 };
 
 main();
