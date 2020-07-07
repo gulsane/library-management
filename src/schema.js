@@ -9,14 +9,14 @@ module.exports = {
 
   copies: `
   create table if not exists book_copies (
+    serial_no INTEGER Primary key AUTOINCREMENT,
     ISBN varchar(20) Not null,
-    serial_no NUMERIC(5) not NULL,
     is_available NUMERIC(1)
   );`,
 
   register: `
   create table if not exists register (
-    serial_no NUMERIC(5) not null,
+    serial_no INTEGER not null,
     action VARCHAR(10) not null,
     user_name VARCHAR(20)
   );`,

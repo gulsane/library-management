@@ -33,18 +33,6 @@ class Sql {
     });
   }
 
-  getSerialNumber() {
-    return new Promise((resolve, reject) => {
-      this.db.get(
-        "SELECT MAX(serial_no) as serial_number from book_copies;",
-        (err, row) => {
-          if (row) resolve(row.serial_number);
-          reject(err);
-        }
-      );
-    });
-  }
-
   isIsbnAvailable(ISBN) {
     return new Promise((resolve, reject) => {
       this.db.all(`select * from books where ISBN='${ISBN}'`, (err, rows) => {

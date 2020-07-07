@@ -3,6 +3,11 @@ const getInsertQuery = function (table, values) {
   return insertQuery.concat(values.map((e) => `'${e}'`).join(","), ");");
 };
 
+const getInsertQueryForBook = function (values) {
+  const insertQuery = `insert into book_copies (ISBN, is_available)  values (`;
+  return insertQuery.concat(values.map((e) => `'${e}'`).join(","), ");");
+};
+
 const createTransaction = function (operations) {
   const operationsList = operations.join(";");
   const transaction = `BEGIN TRANSACTION; ${operationsList}; COMMIT;`;
@@ -10,7 +15,9 @@ const createTransaction = function (operations) {
 };
 
 const selectBooks = function (key, value1, value2) {
-  return `select * from (${selectAllBooks()}) where ${key}=='${value1 || value2}';`;
+  return `select * from (${selectAllBooks()}) where ${key}=='${
+    value1 || value2
+  }';`;
 };
 
 const selectAvailableCopies = function (isbn) {
@@ -47,4 +54,5 @@ module.exports = {
   updateBookState,
   selectBorrowedCopy,
   selectAllBooks,
+  getInsertQueryForBook,
 };
