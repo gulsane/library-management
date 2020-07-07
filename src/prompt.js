@@ -130,6 +130,20 @@ const login = [
     message: 'Select your designation :',
     type: 'list',
     choices: ['librarian', 'borrower']
+  },
+  {
+    name: 'userName',
+    message: 'userName : ',
+    type: 'text',
+    when: ({domain}) => domain == 'librarian',
+    validate: (str) => Boolean(str),
+  },
+  {
+    name: 'password',
+    message: 'Enter password : ',
+    type: 'password',
+    when: ({domain}) => domain == 'librarian',
+    validate: (str) => Boolean(str),
   }
 ]
 

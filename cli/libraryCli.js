@@ -4,6 +4,17 @@ const { giveBorrower } = require("../cli/borrowerCli");
 const { giveLibrarian } = require("../cli/librarianCli");
 let interfaceInstances;
 
+const validatePassword = function ({ domain, userName, password }) {
+  const librarian = { userName: "vaishnavi", password: "password" };
+  if (domain == "borrower") {
+    return domain;
+  }
+  if (userName == librarian.userName && password == librarian.password) {
+    return domain;
+  }
+  return "ourLibrary";
+};
+
 const logout = function (vorpal) {
   vorpal.command("logout").action(function (args, cb) {
     interfaceInstances.ourLibrary.show();
@@ -18,20 +29,21 @@ const startCli = function (library, sqlite) {
 
   ourLibrary.command("login").action(function (argument, callback) {
     this.prompt(prompts.login)
-      .then(({ domain }) => interfaceInstances[domain].show())
-      .then(()=>callback())
-      .catch(()=>callback());
+      .then(validatePassword)
+      .then(( domain ) => interfaceInstances[domain].show())
+      .then(() => callback())
+      .catch(() => callback());
   });
 
   interfaceInstances = {
     ourLibrary,
     borrower: giveBorrower(library, sqlite)
       .use(logout)
-      .delimiter("Library-Borrower-section $ ")
+      .delimiter("Borrower-section $ ")
       .show(),
     librarian: giveLibrarian(library, sqlite)
       .use(logout)
-      .delimiter("Library-librarian-section $ ")
+      .delimiter("Librarian-section $ ")
       .show(),
   };
 };
