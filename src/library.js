@@ -15,14 +15,28 @@ class Library {
     const updateBooks = getInsertQuery("books", [ isbn, title, category, author, ]);
     const updateCopies = getInsertQueryForBook([isbn, true]);
     const transaction = createTransaction([updateBooks, updateCopies]);
-    return client.executeTransaction(transaction, { isbn, title, category, author, });
+    return client.executeTransaction(transaction, {
+      msg: "Book successfully added",
+      isbn,
+      title,
+      category,
+      author,
+    });
+  }
+
+  async isIsbnAvailable(client, isbn) {
+    const bookQuery = selectBooks(`ISBN`, isbn);
+    return await client.getAll(bookQuery, { msg: `${isbn} not available` });
   }
 
   async addCopy(client, isbn) {
-    if (await client.isIsbnAvailable(isbn)) {
+    if (await this.isIsbnAvailable(client, isbn)) {
       const updateCopies = getInsertQueryForBook([isbn, true]);
       const transaction = createTransaction([updateCopies]);
-      return client.executeTransaction(transaction, { isbn });
+      return client.executeTransaction(transaction, {
+        msg: "Copy successfully added",
+        isbn,
+      });
     }
   }
 

@@ -33,15 +33,6 @@ class Sql {
     });
   }
 
-  isIsbnAvailable(ISBN) {
-    return new Promise((resolve, reject) => {
-      this.db.all(`select * from books where ISBN='${ISBN}'`, (err, rows) => {
-        if (rows.length === 0) reject(false);
-        resolve(true);
-      });
-    });
-  }
-
   getAll(schema, errMsg) {
     return new Promise((resolve, reject) => {
       this.db.all(schema, (err, row) => {
