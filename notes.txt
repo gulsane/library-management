@@ -81,3 +81,31 @@ step 3
 
 cli ---> user
       |--->librarian
+
+--------------------
+Library:=>
+login --- choose interface according to account
+register --- ask designation
+
+
+member:=>
+what books he had taken
+returned books
+name
+change password
+borrow book
+return book
+show (all)
+select (all)
+delete account
+
+
+librarian:=>
+add book
+add copy
+remove book
+show(all)
+select(all)
+issue book
+withdraw book
+delete account
