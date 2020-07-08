@@ -15,9 +15,13 @@ const createTransaction = function (operations) {
 };
 
 const selectBooks = function (key, value1, value2) {
-  return `select * from (${selectAllBooks()}) where ${key}=='${
+  return `select * from (${selectAllBooks()}) where ${key}='${
     value1 || value2
-  }';`;
+    }';`;
+};
+
+const selectAvailableBooks = function () {
+  return `select * from (${selectAllBooks()}) where available>=1;`;
 };
 
 const selectAvailableCopies = function (isbn) {
@@ -55,4 +59,5 @@ module.exports = {
   selectBorrowedCopy,
   selectAllBooks,
   getInsertQueryForBook,
+  selectAvailableBooks
 };

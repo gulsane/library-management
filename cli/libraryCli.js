@@ -5,7 +5,7 @@ const { giveLibrarian } = require("../cli/librarianCli");
 let interfaceInstances;
 
 const validatePassword = function ({ domain, userName, password }) {
-  const librarian = { userName: "vaishnavi", password: "password" };
+  const librarian = { userName: "vais", password: "123" };
   if (domain == "borrower") {
     return domain;
   }

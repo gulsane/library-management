@@ -92,7 +92,7 @@ const search = [
     name: 'key',
     message: 'choose one you want to search by',
     type: 'list',
-    choices: ['ISBN', 'title', 'author', 'category']
+    choices: ['ISBN', 'title', 'author', 'category', 'available']
   },
   {
     name: 'ISBN',
@@ -148,4 +148,4 @@ const login = [
 ]
 
 
-module.exports = {addBook, addCopy, borrowBook, returnBook, showTable, search,login};
+module.exports = {addBook, addCopy, borrowBook, returnBook, showTable, search, login};

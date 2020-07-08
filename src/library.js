@@ -7,12 +7,13 @@ const {
   selectBorrowedCopy,
   selectAllBooks,
   getInsertQueryForBook,
+  selectAvailableBooks
 } = require("./actions");
 
 class Library {
   async addBook(client, book) {
-    const { isbn, title, category, author } = book;
-    const updateBooks = getInsertQuery("books", [ isbn, title, category, author, ]);
+    const {isbn, title, category, author} = book;
+    const updateBooks = getInsertQuery("books", [isbn, title, category, author,]);
     const updateCopies = getInsertQueryForBook([isbn, true]);
     const transaction = createTransaction([updateBooks, updateCopies]);
     return client.executeTransaction(transaction, {
@@ -26,7 +27,7 @@ class Library {
 
   async isIsbnAvailable(client, isbn) {
     const bookQuery = selectBooks(`ISBN`, isbn);
-    return await client.getAll(bookQuery, { msg: `${isbn} not available` });
+    return await client.getAll(bookQuery, {msg: `${isbn} not available`});
   }
 
   async addCopy(client, isbn) {
@@ -41,7 +42,7 @@ class Library {
   }
 
   async borrowBook(client, bookInfo) {
-    const { user, info, ISBN, title } = bookInfo;
+    const {user, info, ISBN, title} = bookInfo;
     const availableBooksQuery = selectBooks(info, ISBN, title);
     const [row] = await client.getAll(availableBooksQuery, {
       msg: "Book not available in library",
@@ -89,15 +90,15 @@ class Library {
       table === "all books"
         ? `${selectAllBooks()};`
         : `select * from ${table};`;
-    const errMsg = { msg: "Table is empty" };
+    const errMsg = {msg: "Table is empty"};
     return await client.getAll(bookQuery, errMsg);
   }
 
   async search(client, info) {
-    const booksQuery = selectBooks(info.key, info[info.key]);
-    const errMsg = { msg: `${info.key} ${info[info.key]} not matched` };
+    const booksQuery = info.key == 'available' ? selectAvailableBooks() : selectBooks(info.key, info[info.key]);
+    const errMsg = {msg: `${info.key} ${info[info.key]} not matched`};
     return await client.getAll(booksQuery, errMsg);
   }
 }
 
-module.exports = { Library };
+module.exports = {Library};
