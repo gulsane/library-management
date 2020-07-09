@@ -36,6 +36,10 @@ const selectBorrowedCopy = function (serial_number) {
   return `select * from book_copies where serial_no='${serial_number}' and is_available='false';`;
 };
 
+const getMemberQuery= function(id,password){
+  return `select * from members where id = '${id}' and password = '${password}';`
+}
+
 const selectAllBooks = function () {
   return `
   SELECT books.ISBN
@@ -59,5 +63,6 @@ module.exports = {
   selectBorrowedCopy,
   selectAllBooks,
   getInsertQueryForBook,
-  selectAvailableBooks
+  selectAvailableBooks,
+  getMemberQuery
 };

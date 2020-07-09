@@ -1,6 +1,5 @@
 const Vorpal = require("vorpal");
 const prompts = require("../src/prompt");
-const { toggle } = require("./libraryCli");
 
 const giveLibrarian = function (library, sqlite) {
   const librarian = new Vorpal();

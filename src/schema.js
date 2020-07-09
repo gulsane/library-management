@@ -20,4 +20,13 @@ module.exports = {
     action VARCHAR(10) not null,
     user_name VARCHAR(20)
   );`,
+
+  members:`
+  create table if not exists members(
+    id VARCHAR(8) unique not null,
+    name VARCHAR(10) not null,
+    password VARCHAR(10) not null,
+    designation VARCHAR(10) default 'borrower'
+  );
+  `
 };

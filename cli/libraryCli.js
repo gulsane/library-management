@@ -4,17 +4,6 @@ const { giveBorrower } = require("../cli/borrowerCli");
 const { giveLibrarian } = require("../cli/librarianCli");
 let interfaceInstances;
 
-const validatePassword = function ({ domain, userName, password }) {
-  const librarian = { userName: "vais", password: "123" };
-  if (domain == "borrower") {
-    return domain;
-  }
-  if (userName == librarian.userName && password == librarian.password) {
-    return domain;
-  }
-  return "ourLibrary";
-};
-
 const logout = function (vorpal) {
   vorpal.command("logout").action(function (args, cb) {
     interfaceInstances.ourLibrary.show();
@@ -27,12 +16,19 @@ const startCli = function (library, sqlite) {
   const ourLibrary = new Vorpal();
   ourLibrary.delimiter("library $ ").show();
 
+  ourLibrary.command("sign in").action(function (argument, callback) {
+    this.prompt(prompts.signIn)
+      .then((details)=>library.registerUser(sqlite,details))
+      .then(callback)
+      .catch(callback);
+  });
+
   ourLibrary.command("login").action(function (argument, callback) {
     this.prompt(prompts.login)
-      .then(validatePassword)
-      .then(( domain ) => interfaceInstances[domain].show())
-      .then(() => callback())
-      .catch(() => callback());
+      .then(({id,password})=>library.validatePassword(sqlite,id,password))
+      .then((domain) => {interfaceInstances[domain].show()})
+      .then(callback)
+      .catch(callback)
   });
 
   interfaceInstances = {

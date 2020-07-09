@@ -7,7 +7,8 @@ const {
   selectBorrowedCopy,
   selectAllBooks,
   getInsertQueryForBook,
-  selectAvailableBooks
+  selectAvailableBooks,
+  getMemberQuery
 } = require("./actions");
 
 class Library {
@@ -98,6 +99,16 @@ class Library {
     const booksQuery = info.key == 'available' ? selectAvailableBooks() : selectBooks(info.key, info[info.key]);
     const errMsg = {msg: `${info.key} ${info[info.key]} not matched`};
     return await client.getAll(booksQuery, errMsg);
+  }
+
+  async registerUser(client,{id,name,password,designation}){
+    const registrationQuery = getInsertQuery('members',[id,name,password,designation]);
+    return await client.runQuery(registrationQuery,{msg:'Successfully register'});
+  }
+
+  async validatePassword(client,id,password){
+    const [user] = await client.getAll(getMemberQuery(id,password),{msg:"error in login"});
+    return user.designation;
   }
 }
 

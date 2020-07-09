@@ -20,6 +20,7 @@ class Sql {
     sql.createTable(schemas.books);
     sql.createTable(schemas.copies);
     sql.createTable(schemas.register);
+    sql.createTable(schemas.members);
 
     return sql;
   }
@@ -33,9 +34,18 @@ class Sql {
     });
   }
 
-  getAll(schema, errMsg) {
+  runQuery(query,msg){
     return new Promise((resolve, reject) => {
-      this.db.all(schema, (err, row) => {
+      this.db.run(query, (err) => {
+        if (err) reject(err);
+        resolve(msg);
+      });
+    });
+  }
+
+  getAll(query, errMsg) {
+    return new Promise((resolve, reject) => {
+      this.db.all(query, (err, row) => {
         if (err) reject(err);
         if (!row.length) reject(errMsg);
         resolve(row);

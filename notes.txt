@@ -109,3 +109,11 @@ select(all)
 issue book
 withdraw book
 delete account
+
+
+------------schema for login----
+user->table:= userId: unique
+              username: not null
+              password: not null
+              domain: default borrower otherwise librarian
+
