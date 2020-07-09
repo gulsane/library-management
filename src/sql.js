@@ -9,7 +9,7 @@ class Sql {
     return new Promise((resolve, reject) => {
       this.db.run(schema, (err) => {
         if (err) reject(err);
-        resolve({msg:'table created successfully'});
+        resolve({msg:'Table created successfully.'});
       });
     });
   }

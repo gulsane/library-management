@@ -1,7 +1,7 @@
 const addBook = [
   {
     name: 'isbn',
-    message: 'isbn number : ',
+    message: 'Isbn number : ',
     type: 'text',
     validate: (str) => Boolean(str),
   },
@@ -28,7 +28,7 @@ const addBook = [
 const addCopy = [
   {
     name: 'isbn',
-    message: 'isbn number : ',
+    message: 'Isbn number : ',
     type: 'text',
     validate: (str) => Boolean(str),
   },
@@ -46,7 +46,7 @@ const returnBook = [
 const showTable = [
   {
     name: 'table',
-    message: 'select a table to see : ',
+    message: 'Select a table name to see : ',
     type: 'list',
     choices: ['all books', 'copies', 'register'],
   },
@@ -55,20 +55,20 @@ const showTable = [
 const borrowBook = [
   {
     name: 'key',
-    message: 'select a detail you can give',
+    message: 'Select a detail you can give',
     type: 'list',
     choices: ['isbn', 'title'],
   },
   {
     name: 'isbn',
-    message: 'isbn number : ',
+    message: 'Isbn number  : ',
     type: 'text',
     when: ({ key }) => key == 'isbn',
     validate: (str) => Boolean(str),
   },
   {
     name: 'title',
-    message: 'title : ',
+    message: 'Title        : ',
     type: 'text',
     when: ({ key }) => key == 'title',
     validate: (str) => Boolean(str),
@@ -78,34 +78,34 @@ const borrowBook = [
 const search = [
   {
     name: 'key',
-    message: 'choose one you want to search by',
+    message: 'Choose any option to search',
     type: 'list',
     choices: ['isbn', 'title', 'author', 'category', 'available'],
   },
   {
     name: 'isbn',
-    message: 'isbn number : ',
+    message: 'Isbn number  : ',
     type: 'text',
     when: ({ key }) => key == 'isbn',
     validate: (str) => Boolean(str),
   },
   {
     name: 'title',
-    message: 'title : ',
+    message: 'Title        : ',
     type: 'text',
     when: ({ key }) => key == 'title',
     validate: (str) => Boolean(str),
   },
   {
     name: 'author',
-    message: 'author name: ',
+    message: 'Author name  : ',
     type: 'text',
     when: ({ key }) => key == 'author',
     validate: (str) => Boolean(str),
   },
   {
     name: 'category',
-    message: 'category : ',
+    message: 'Category     : ',
     type: 'text',
     when: ({ key }) => key == 'category',
     validate: (str) => Boolean(str),
@@ -115,19 +115,19 @@ const search = [
 const signIn = [
   {
     name: 'id',
-    message: 'Enter id : ',
+    message: 'Enter your user name    : ',
     type: 'text',
     validate: (str) => Boolean(str),
   },
   {
     name: 'name',
-    message: 'Enter your name : ',
+    message: 'Enter your name         : ',
     type: 'text',
     validate: (str) => Boolean(str),
   },
   {
     name: 'password',
-    message: 'Enter password : ',
+    message: 'Enter password          : ',
     type: 'password',
     validate: (str) => Boolean(str),
   },
@@ -142,13 +142,13 @@ const signIn = [
 const login = [
   {
     name: 'id',
-    message: 'Enter your Id : ',
+    message: 'Enter your user name : ',
     type: 'text',
     validate: (str) => Boolean(str),
   },
   {
     name: 'password',
-    message: 'Enter password : ',
+    message: 'Enter password       : ',
     type: 'password',
     validate: (str) => Boolean(str),
   },

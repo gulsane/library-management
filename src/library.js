@@ -25,7 +25,7 @@ class Library {
     const updateCopies = getInsertQueryForBook([isbn, true]);
     const transaction = createTransaction([updateBooks, updateCopies]);
     return client.executeTransaction(transaction, {
-      msg: 'Book successfully added',
+      msg: 'Book registered successfully.',
       isbn,
       title,
       category,
@@ -33,17 +33,17 @@ class Library {
     });
   }
 
-  async isisbnAvailable(client, isbn) {
+  async isIsbnAvailable(client, isbn) {
     const bookQuery = selectBooks(`isbn`, isbn);
-    return await client.getAll(bookQuery, { msg: `${isbn} not available` });
+    return await client.getAll(bookQuery, { msg: `${isbn} not available.` });
   }
 
   async addCopy(client, isbn) {
-    if (await this.isisbnAvailable(client, isbn)) {
+    if (await this.isIsbnAvailable(client, isbn)) {
       const updateCopies = getInsertQueryForBook([isbn, true]);
       const transaction = createTransaction([updateCopies]);
       return client.executeTransaction(transaction, {
-        msg: 'Copy successfully added',
+        msg: 'Copy registered successfully.',
         isbn,
       });
     }
@@ -53,11 +53,11 @@ class Library {
     const { key, isbn, title } = bookInfo;
     const availableBooksQuery = selectBooks(key, isbn, title);
     const [row] = await client.getAll(availableBooksQuery, {
-      msg: 'Book not available in library',
+      msg: 'Book unavailable.',
     });
     const availableCopyQuery = selectAvailableCopies(row.isbn);
     const [bookCopy] = await client.getAll(availableCopyQuery, {
-      msg: 'Currently no copy available of this book',
+      msg: 'Currently unavailable.',
     });
     const updateTable = updateBookState(bookCopy.serialNo, false);
     const currentDate = new Date();
@@ -71,7 +71,7 @@ class Library {
     ]);
     const transaction = createTransaction([updateTable, addTable]);
     return client.executeTransaction(transaction, {
-      msg: 'borrow successful',
+      msg: 'borrowed successfully.',
       title: row.title,
       userId,
       serialNo: bookCopy.serialNo,
@@ -81,7 +81,7 @@ class Library {
   async returnBook(client, serialNo, userId) {
     const borrowedBookQuery = selectBorrowedCopy(serialNo);
     const [borrowedBook] = await client.getAll(borrowedBookQuery, {
-      msg: 'Book was not taken from library',
+      msg: 'Book was not taken from library.',
     });
     const updateTable = updateBookState(borrowedBook.serialNo, true);
     const [transactionDetail] = await client.getAll(getTransaction(serialNo));
@@ -95,7 +95,7 @@ class Library {
     ]);
     const transaction = createTransaction([updateTable, addTable]);
     return client.executeTransaction(transaction, {
-      msg: 'return successful',
+      msg: 'returned successfully.',
       userId,
       serialNo: borrowedBook.serialNo,
     });
@@ -106,7 +106,7 @@ class Library {
       table === 'all books'
         ? `${selectAllBooks()};`
         : `select * from ${table};`;
-    const errMsg = { msg: 'Table is empty' };
+    const errMsg = { msg: 'Table is empty.' };
     return await client.getAll(bookQuery, errMsg);
   }
 
@@ -115,7 +115,7 @@ class Library {
       info.key == 'available'
         ? selectAvailableBooks()
         : selectBooks(info.key, info[info.key]);
-    const errMsg = { msg: `${info.key} ${info[info.key]} not matched` };
+    const errMsg = { msg: `${info.key} ${info[info.key]} not matched.` };
     return await client.getAll(booksQuery, errMsg);
   }
 
@@ -127,13 +127,13 @@ class Library {
       designation,
     ]);
     return await client.runQuery(registrationQuery, {
-      msg: 'Successfully register',
+      msg: 'Registered successfully.',
     });
   }
 
   async validatePassword(client, id, password) {
     const [user] = await client.getAll(getMemberQuery(id, password), {
-      msg: 'error in login',
+      msg: 'Error in login.',
     });
     return { id: user.id, domain: user.designation };
   }
