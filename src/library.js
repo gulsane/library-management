@@ -42,9 +42,9 @@ class Library {
     }
   }
 
-  async borrowBook(client, bookInfo) {
-    const {user, info, ISBN, title} = bookInfo;
-    const availableBooksQuery = selectBooks(info, ISBN, title);
+  async borrowBook(client, bookInfo, userId) {
+    const {key, ISBN, title} = bookInfo;
+    const availableBooksQuery = selectBooks(key, ISBN, title);
     const [row] = await client.getAll(availableBooksQuery, {
       msg: "Book not available in library",
     });
@@ -56,18 +56,18 @@ class Library {
     const addTable = getInsertQuery("register", [
       bookCopy.serial_no,
       "borrow",
-      user,
+      userId,
     ]);
     const transaction = createTransaction([updateTable, addTable]);
     return client.executeTransaction(transaction, {
       msg: "borrow successful",
       title: row.title,
-      user,
+      userId,
       serial_no: bookCopy.serial_no,
     });
   }
 
-  async returnBook(client, user, serial_no) {
+  async returnBook(client, serial_no, userId) {
     const borrowedBookQuery = selectBorrowedCopy(serial_no);
     const [borrowedBook] = await client.getAll(borrowedBookQuery, {
       msg: "Book was not taken from library",
@@ -76,12 +76,12 @@ class Library {
     const addTable = getInsertQuery("register", [
       borrowedBook.serial_no,
       "return",
-      user,
+      userId
     ]);
     const transaction = createTransaction([updateTable, addTable]);
     return client.executeTransaction(transaction, {
       msg: "return successful",
-      user,
+      userId,
       serial_no: borrowedBook.serial_no,
     });
   }
@@ -101,14 +101,15 @@ class Library {
     return await client.getAll(booksQuery, errMsg);
   }
 
-  async registerUser(client,{id,name,password,designation}){
-    const registrationQuery = getInsertQuery('members',[id,name,password,designation]);
-    return await client.runQuery(registrationQuery,{msg:'Successfully register'});
+  async registerUser(client, {id, name, password, designation}) {
+    const registrationQuery = getInsertQuery('members', [id, name, password, designation]);
+    return await client.runQuery(registrationQuery, {msg: 'Successfully register'});
   }
 
-  async validatePassword(client,id,password){
-    const [user] = await client.getAll(getMemberQuery(id,password),{msg:"error in login"});
-    return user.designation;
+  async validatePassword(client, id, password) {
+    const [user] = await client.getAll(getMemberQuery(id, password), {msg: "error in login"});
+    // return user.designation;
+    return {id: user.id, domain: user.designation};
   }
 }
 

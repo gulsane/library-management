@@ -13,14 +13,14 @@ const giveLibrarian = function (library, sqlite) {
 
   librarian.command("add copy").action(function (argument, callback) {
     this.prompt(prompts.addCopy)
-      .then(({ isbn }) => library.addCopy(sqlite, isbn))
+      .then(({isbn}) => library.addCopy(sqlite, isbn))
       .then(callback)
       .catch(callback);
   });
 
   librarian.command("show").action(function (argument, callback) {
     this.prompt(prompts.showTable)
-      .then(({ table }) => library.show(sqlite, table))
+      .then(({table}) => library.show(sqlite, table))
       .then((rows) => {
         console.table(rows);
         callback();
@@ -40,4 +40,4 @@ const giveLibrarian = function (library, sqlite) {
   return librarian;
 };
 
-module.exports = { giveLibrarian };
+module.exports = {giveLibrarian};

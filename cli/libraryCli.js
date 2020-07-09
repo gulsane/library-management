@@ -1,8 +1,11 @@
 const Vorpal = require("vorpal");
 const prompts = require("../src/prompt");
-const { giveBorrower } = require("../cli/borrowerCli");
-const { giveLibrarian } = require("../cli/librarianCli");
+const {giveBorrower} = require("../cli/borrowerCli");
+const {giveLibrarian} = require("../cli/librarianCli");
 let interfaceInstances;
+let userId;
+
+const getUserId = () => userId;
 
 const logout = function (vorpal) {
   vorpal.command("logout").action(function (args, cb) {
@@ -18,15 +21,18 @@ const startCli = function (library, sqlite) {
 
   ourLibrary.command("sign in").action(function (argument, callback) {
     this.prompt(prompts.signIn)
-      .then((details)=>library.registerUser(sqlite,details))
+      .then((details) => library.registerUser(sqlite, details))
       .then(callback)
       .catch(callback);
   });
 
   ourLibrary.command("login").action(function (argument, callback) {
     this.prompt(prompts.login)
-      .then(({id,password})=>library.validatePassword(sqlite,id,password))
-      .then((domain) => {interfaceInstances[domain].show()})
+      .then(({id, password}) => library.validatePassword(sqlite, id, password))
+      .then(({id, domain}) => {
+        interfaceInstances[domain].show();
+        userId = id;
+      })
       .then(callback)
       .catch(callback)
   });
@@ -44,4 +50,4 @@ const startCli = function (library, sqlite) {
   };
 };
 
-module.exports = { startCli };
+module.exports = {startCli, getUserId};
