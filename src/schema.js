@@ -16,6 +16,7 @@ module.exports = {
 
   register: `
   create table if not exists register (
+    transactionId integer primary key autoincrement,
     id varchar(10) not null,
     action varchar(6) not null,
     serial_no INTEGER not null,

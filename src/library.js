@@ -8,8 +8,10 @@ const {
   selectAllBooks,
   getInsertQueryForBook,
   selectAvailableBooks,
-  getMemberQuery
-} = require("./actions");
+  getMemberQuery,
+  getRegisterQuery,
+  getTransaction
+} = require('./actions');
 
 class Library {
   async addBook(client, book) {
@@ -54,7 +56,7 @@ class Library {
     });
     const updateTable = updateBookState(bookCopy.serial_no, false);
     const currentDate = new Date();
-    const addTable = getInsertQuery("register", [
+    const addTable = getRegisterQuery("register", [
       userId,
       'borrow',
       bookCopy.serial_no,
@@ -77,12 +79,13 @@ class Library {
       msg: "Book was not taken from library",
     });
     const updateTable = updateBookState(borrowedBook.serial_no, true);
-    const addTable = getInsertQuery("register", [
+    const [transactionDetail] = await client.getAll(getTransaction(serial_no));
+    const addTable = getRegisterQuery("register", [
       userId,
       'return',
       borrowedBook.serial_no,
-      borrowedBook.borrowDate,
-      borrowedBook.dueDate,
+      transactionDetail.borrowDate,
+      transactionDetail.dueDate,
       new Date().toDateString()
     ]);
     const transaction = createTransaction([updateTable, addTable]);
