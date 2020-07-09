@@ -118,7 +118,6 @@ class Library {
 
   async validatePassword(client, id, password) {
     const [user] = await client.getAll(getMemberQuery(id, password), {msg: "error in login"});
-    // return user.designation;
     return {id: user.id, domain: user.designation};
   }
 }
