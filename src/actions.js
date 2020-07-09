@@ -1,28 +1,28 @@
 const getInsertQuery = function (table, values) {
   const insertQuery = `insert into ${table} values (`;
-  return insertQuery.concat(values.map((e) => `'${e}'`).join(","), ");");
+  return insertQuery.concat(values.map((e) => `'${e}'`).join(','), ');');
 };
 
 const getRegisterQuery = function (table, values) {
-  const insertQuery = `insert into ${table} (id,action,serial_no,borrowDate,dueDate,returnDate) values (`;
+  const insertQuery = `insert into ${table} (id,action,serialNo,borrowDate,dueDate,returnDate) values (`;
   return insertQuery.concat(values.map((e) => `'${e}'`).join(','), ');');
 };
 
 const getInsertQueryForBook = function (values) {
-  const insertQuery = `insert into book_copies (ISBN, is_available)  values (`;
-  return insertQuery.concat(values.map((e) => `'${e}'`).join(","), ");");
+  const insertQuery = `insert into copies (isbn, isAvailable)  values (`;
+  return insertQuery.concat(values.map((e) => `'${e}'`).join(','), ');');
 };
 
 const createTransaction = function (operations) {
-  const operationsList = operations.join(";");
-  const transaction = `BEGIN TRANSACTION; ${operationsList}; COMMIT;`;
+  const operationsList = operations.join(';');
+  const transaction = `begin transaction; ${operationsList}; commit;`;
   return transaction;
 };
 
 const selectBooks = function (key, value1, value2) {
   return `select * from (${selectAllBooks()}) where ${key}='${
     value1 || value2
-    }';`;
+  }';`;
 };
 
 const selectAvailableBooks = function () {
@@ -30,37 +30,37 @@ const selectAvailableBooks = function () {
 };
 
 const selectAvailableCopies = function (isbn) {
-  return `select * from book_copies where ISBN='${isbn}' and is_available='true';`;
+  return `select * from copies where isbn='${isbn}' and isAvailable='true';`;
 };
 
-const updateBookState = function (serial_number, state) {
-  return `update book_copies set is_available = '${state}' where serial_no='${serial_number}'`;
+const updateBookState = function (serialNumber, state) {
+  return `update copies set isAvailable = '${state}' where serialNo='${serialNumber}'`;
 };
 
-const selectBorrowedCopy = function (serial_number) {
-  return `select * from book_copies where serial_no='${serial_number}' and is_available='false';`;
+const selectBorrowedCopy = function (serialNumber) {
+  return `select * from copies where serialNo='${serialNumber}' and isAvailable='false';`;
 };
 
-const getTransaction = function (serial_number) {
-  return `select * from register where serial_no= '${serial_number}' and action='borrow' order by transactionId desc;`
-}
+const getTransaction = function (serialNumber) {
+  return `select * from register where serialNo= '${serialNumber}' and action='borrow' order by transactionId desc;`;
+};
 
 const getMemberQuery = function (id, password) {
-  return `select * from members where id = '${id}' and password = '${password}';`
-}
+  return `select * from members where id = '${id}' and password = '${password}';`;
+};
 
 const selectAllBooks = function () {
   return `
-  SELECT books.ISBN
+  select books.isbn
        ,books.title
        ,books.category
        ,books.author
-       ,count(*) as books_count
-       ,count(*) FILTER(WHERE book_copies.is_available = 'true') as available 
+       ,count(*) as booksCount
+       ,count(*) filter(where copies.isAvailable = 'true') as available 
        from books
-       join book_copies
-on books.ISBN = book_copies.ISBN
-group by books.ISBN`;
+       join copies
+on books.isbn = copies.isbn
+group by books.isbn`;
 };
 
 module.exports = {
@@ -75,5 +75,5 @@ module.exports = {
   selectAvailableBooks,
   getMemberQuery,
   getRegisterQuery,
-  getTransaction
+  getTransaction,
 };

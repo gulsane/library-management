@@ -6,9 +6,9 @@ let userId;
 const getUserId = () => userId;
 
 const logout = function (vorpal) {
-  vorpal.command('logout').action(function (args, cb) {
+  vorpal.command('logout').action(function (argument, callback) {
     interfaceInstances.main.show();
-    cb();
+    callback();
   });
   return vorpal;
 };
@@ -91,9 +91,7 @@ const addBorrowBook = function (vorpal, library, sqlite) {
 const addReturnBook = function (vorpal, library, sqlite) {
   vorpal.command('return book').action(function (argument, callback) {
     this.prompt(prompts.returnBook)
-      .then(({ serial_no }) =>
-        library.returnBook(sqlite, serial_no, getUserId())
-      )
+      .then(({ serialNo }) => library.returnBook(sqlite, serialNo, getUserId()))
       .then(callback)
       .catch(callback);
   });
@@ -101,7 +99,6 @@ const addReturnBook = function (vorpal, library, sqlite) {
 
 const createMainInterface = function (library, sqlite) {
   const vorpal = new Vorpal();
-  vorpal.use(logout);
   addLogin(vorpal, library, sqlite);
   addSignIn(vorpal, library, sqlite);
 
@@ -138,9 +135,8 @@ const startCli = function (library, sqlite) {
     borrower: createBorrowerInterface(library, sqlite),
     librarian: createLibrarianInterface(library, sqlite),
   };
-  
-  interfaceInstances.main.show()
+
+  interfaceInstances.main.show();
 };
 
 module.exports = { startCli };
- 

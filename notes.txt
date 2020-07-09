@@ -30,14 +30,14 @@ according to
       
 
         --> book =>(+) isbn, title, category
-        --> book_copies =>(+) isbn, serial_no
+        --> copies =>(+) isbn, serialNo
 
 2 able to add a book (already present)
 
     --> cmd as ( add isbn=__ )
 
     if isbn present
-        --> book_copies  =>(+) isbn, serial_no(new)
+        --> copies  =>(+) isbn, serialNo(new)
 
     if not 
         --> book is not present give all details
@@ -52,15 +52,15 @@ according to
     or
     --> cmd as ( borrow user_name=__ isbn=__ )
     or
-    --> cmd as ( borrow user_name=__ serial_no=__ )
+    --> cmd as ( borrow user_name=__ serialNo=__ )
 
 step 1
-    search according to attribute given ==> returns ( serial_no if present ) 
+    search according to attribute given ==> returns ( serialNo if present ) 
     other wise go out of steps and given book not available
 
 step 2 
     --> make that copy unavailable in book_copy
-    --> update register with (serial_no, action, date , user_name)
+    --> update register with (serialNo, action, date , user_name)
 
 step 3 
     --> give ok (or) given book not available
@@ -69,12 +69,12 @@ step 3
 
 2 can return a book
 
-    --> cmd as ( return serial_no=__ )
+    --> cmd as ( return serialNo=__ )
 
     steps
 
     -->make book available in copy
-    --> update register with (serial_no, action, date, id)
+    --> update register with (serialNo, action, date, id)
 
 
 ------------------
@@ -121,8 +121,23 @@ user->table:= userId: unique
 
 register->table:= id not null
                   action not null
-                  serial_number not null
+                  serialNumber not null
                   borrow_at 
                   due_date
                   returned_at
 
+
+----------------------------------------------------------
+
+register => every thing from ( borrowedTransaction left join resolvedTransaction )
+
+borrowedTransaction
+                  transactionId not null
+                  userId not null
+                  serialNumber not null
+                  borrow_at 
+                  due_dated
+
+resolvedTransaction
+                  transactionId not null
+                  returned_at

@@ -1,155 +1,155 @@
 const addBook = [
   {
-    name: "isbn",
-    message: "ISBN number : ",
-    type: "text",
+    name: 'isbn',
+    message: 'isbn number : ',
+    type: 'text',
     validate: (str) => Boolean(str),
   },
   {
-    name: "title",
-    message: "Title       : ",
-    type: "text",
+    name: 'title',
+    message: 'Title       : ',
+    type: 'text',
     validate: (str) => Boolean(str),
   },
   {
-    name: "author",
-    message: "Author      : ",
-    type: "text",
+    name: 'author',
+    message: 'Author      : ',
+    type: 'text',
     validate: (str) => Boolean(str),
   },
   {
-    name: "category",
-    message: "Category    : ",
-    type: "text",
+    name: 'category',
+    message: 'Category    : ',
+    type: 'text',
     validate: (str) => Boolean(str),
   },
 ];
 
 const addCopy = [
   {
-    name: "isbn",
-    message: "ISBN number : ",
-    type: "text",
+    name: 'isbn',
+    message: 'isbn number : ',
+    type: 'text',
     validate: (str) => Boolean(str),
   },
 ];
 
 const returnBook = [
   {
-    name: "serial_no",
+    name: 'serialNo',
     message: "Book's serial number : ",
-    type: "text",
+    type: 'text',
     validate: (str) => Boolean(str),
-  }
+  },
 ];
 
 const showTable = [
   {
-    name: "table",
-    message: "select a table to see : ",
-    type: "list",
-    choices: ["all books", "book_copies", "register"],
+    name: 'table',
+    message: 'select a table to see : ',
+    type: 'list',
+    choices: ['all books', 'copies', 'register'],
   },
 ];
 
 const borrowBook = [
   {
-    name: "key",
-    message: "select a detail you can give",
-    type: "list",
-    choices: ["ISBN", "title"],
+    name: 'key',
+    message: 'select a detail you can give',
+    type: 'list',
+    choices: ['isbn', 'title'],
   },
   {
-    name: "ISBN",
-    message: "ISBN number : ",
-    type: "text",
-    when: ({key}) => key == "ISBN",
+    name: 'isbn',
+    message: 'isbn number : ',
+    type: 'text',
+    when: ({ key }) => key == 'isbn',
     validate: (str) => Boolean(str),
   },
   {
-    name: "title",
-    message: "title : ",
-    type: "text",
-    when: ({key}) => key == "title",
+    name: 'title',
+    message: 'title : ',
+    type: 'text',
+    when: ({ key }) => key == 'title',
     validate: (str) => Boolean(str),
-  }
+  },
 ];
 
 const search = [
   {
-    name: "key",
-    message: "choose one you want to search by",
-    type: "list",
-    choices: ["ISBN", "title", "author", "category", "available"],
+    name: 'key',
+    message: 'choose one you want to search by',
+    type: 'list',
+    choices: ['isbn', 'title', 'author', 'category', 'available'],
   },
   {
-    name: "ISBN",
-    message: "ISBN number : ",
-    type: "text",
-    when: ({key}) => key == "ISBN",
+    name: 'isbn',
+    message: 'isbn number : ',
+    type: 'text',
+    when: ({ key }) => key == 'isbn',
     validate: (str) => Boolean(str),
   },
   {
-    name: "title",
-    message: "title : ",
-    type: "text",
-    when: ({key}) => key == "title",
+    name: 'title',
+    message: 'title : ',
+    type: 'text',
+    when: ({ key }) => key == 'title',
     validate: (str) => Boolean(str),
   },
   {
-    name: "author",
-    message: "author name: ",
-    type: "text",
-    when: ({key}) => key == "author",
+    name: 'author',
+    message: 'author name: ',
+    type: 'text',
+    when: ({ key }) => key == 'author',
     validate: (str) => Boolean(str),
   },
   {
-    name: "category",
-    message: "category : ",
-    type: "text",
-    when: ({key}) => key == "category",
+    name: 'category',
+    message: 'category : ',
+    type: 'text',
+    when: ({ key }) => key == 'category',
     validate: (str) => Boolean(str),
   },
 ];
 
 const signIn = [
   {
-    name: "id",
-    message: "Enter id : ",
-    type: "text",
+    name: 'id',
+    message: 'Enter id : ',
+    type: 'text',
     validate: (str) => Boolean(str),
   },
   {
-    name: "name",
-    message: "Enter your name : ",
-    type: "text",
+    name: 'name',
+    message: 'Enter your name : ',
+    type: 'text',
     validate: (str) => Boolean(str),
   },
   {
-    name: "password",
-    message: "Enter password : ",
-    type: "password",
+    name: 'password',
+    message: 'Enter password : ',
+    type: 'password',
     validate: (str) => Boolean(str),
   },
   {
-    name: "designation",
-    message: "Select your designation :",
-    type: "list",
-    choices: ["librarian", "borrower"],
-  }
+    name: 'designation',
+    message: 'Select your designation :',
+    type: 'list',
+    choices: ['librarian', 'borrower'],
+  },
 ];
 
 const login = [
   {
-    name: "id",
-    message: "Enter your Id : ",
-    type: "text",
+    name: 'id',
+    message: 'Enter your Id : ',
+    type: 'text',
     validate: (str) => Boolean(str),
   },
   {
-    name: "password",
-    message: "Enter password : ",
-    type: "password",
+    name: 'password',
+    message: 'Enter password : ',
+    type: 'password',
     validate: (str) => Boolean(str),
   },
 ];
