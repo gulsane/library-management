@@ -53,10 +53,14 @@ class Library {
       msg: "Currently no copy available of this book",
     });
     const updateTable = updateBookState(bookCopy.serial_no, false);
+    const currentDate = new Date();
     const addTable = getInsertQuery("register", [
-      bookCopy.serial_no,
-      "borrow",
       userId,
+      'borrow',
+      bookCopy.serial_no,
+      currentDate.toDateString(),
+      new Date(currentDate.valueOf() + 864000000).toDateString(),
+      null
     ]);
     const transaction = createTransaction([updateTable, addTable]);
     return client.executeTransaction(transaction, {
@@ -74,9 +78,12 @@ class Library {
     });
     const updateTable = updateBookState(borrowedBook.serial_no, true);
     const addTable = getInsertQuery("register", [
+      userId,
+      'return',
       borrowedBook.serial_no,
-      "return",
-      userId
+      borrowedBook.borrowDate,
+      borrowedBook.dueDate,
+      new Date().toDateString()
     ]);
     const transaction = createTransaction([updateTable, addTable]);
     return client.executeTransaction(transaction, {

@@ -111,9 +111,18 @@ withdraw book
 delete account
 
 
-------------schema for login----
+------------schema for login---------
 user->table:= userId: unique
               username: not null
               password: not null
               domain: default borrower otherwise librarian
+
+------------schema for register------
+
+register->table:= id not null
+                  action not null
+                  serial_number not null
+                  borrow_at 
+                  due_date
+                  returned_at
 

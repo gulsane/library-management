@@ -16,14 +16,17 @@ module.exports = {
 
   register: `
   create table if not exists register (
+    id varchar(10) not null,
+    action varchar(6) not null,
     serial_no INTEGER not null,
-    action VARCHAR(10) not null,
-    user_name VARCHAR(20)
+    borrowDate date not null,
+    dueDate date not null,
+    returnDate date
   );`,
 
-  members:`
+  members: `
   create table if not exists members(
-    id VARCHAR(8) unique not null,
+    id VARCHAR(10) unique not null,
     name VARCHAR(10) not null,
     password VARCHAR(10) not null,
     designation VARCHAR(10) default 'borrower'

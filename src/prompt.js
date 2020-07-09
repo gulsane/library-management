@@ -41,12 +41,6 @@ const returnBook = [
     type: "text",
     validate: (str) => Boolean(str),
   }
-  // {
-  //   name: "user",
-  //   message: "Enter name           : ",
-  //   type: "text",
-  //   validate: (str) => Boolean(str),
-  // },
 ];
 
 const showTable = [
@@ -59,12 +53,6 @@ const showTable = [
 ];
 
 const borrowBook = [
-  // {
-  //   name: "user",
-  //   message: "Enter name  : ",
-  //   type: "text",
-  //   validate: (str) => Boolean(str),
-  // },
   {
     name: "key",
     message: "select a detail you can give",
@@ -84,7 +72,7 @@ const borrowBook = [
     type: "text",
     when: ({key}) => key == "title",
     validate: (str) => Boolean(str),
-  },
+  }
 ];
 
 const search = [
