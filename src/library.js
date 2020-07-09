@@ -1,29 +1,10 @@
-const {
-  getInsertQuery,
-  createTransaction,
-  selectBooks,
-  selectAvailableCopies,
-  updateBookState,
-  selectBorrowedCopy,
-  selectAllBooks,
-  getInsertQueryForBook,
-  selectAvailableBooks,
-  getMemberQuery,
-  getRegisterQuery,
-  getTransaction,
-} = require('./actions');
-
+const generate = require('./actions');
 class Library {
   async addBook(client, book) {
     const { isbn, title, category, author } = book;
-    const updateBooks = getInsertQuery('books', [
-      isbn,
-      title,
-      category,
-      author,
-    ]);
-    const updateCopies = getInsertQueryForBook([isbn, true]);
-    const transaction = createTransaction([updateBooks, updateCopies]);
+    const insertBook = generate.insertQuery('books', [ isbn, title, category, author, ]);
+    const insertCopy = generate.insertQueryForCopy([isbn, true]);
+    const transaction = generate.createTransaction([insertBook, insertCopy]);
     return client.executeTransaction(transaction, {
       msg: 'Book registered successfully.',
       isbn,
@@ -34,14 +15,14 @@ class Library {
   }
 
   async isIsbnAvailable(client, isbn) {
-    const bookQuery = selectBooks(`isbn`, isbn);
+    const bookQuery = generate.searchQuery(`isbn`, isbn);
     return await client.getAll(bookQuery, { msg: `${isbn} not available.` });
   }
 
   async addCopy(client, isbn) {
     if (await this.isIsbnAvailable(client, isbn)) {
-      const updateCopies = getInsertQueryForBook([isbn, true]);
-      const transaction = createTransaction([updateCopies]);
+      const insertCopy = generate.insertQueryForCopy([isbn, true]);
+      const transaction = generate.createTransaction([insertCopy]);
       return client.executeTransaction(transaction, {
         msg: 'Copy registered successfully.',
         isbn,
@@ -51,17 +32,13 @@ class Library {
 
   async borrowBook(client, bookInfo, userId) {
     const { key, isbn, title } = bookInfo;
-    const availableBooksQuery = selectBooks(key, isbn, title);
-    const [row] = await client.getAll(availableBooksQuery, {
-      msg: 'Book unavailable.',
-    });
-    const availableCopyQuery = selectAvailableCopies(row.isbn);
-    const [bookCopy] = await client.getAll(availableCopyQuery, {
-      msg: 'Currently unavailable.',
-    });
-    const updateTable = updateBookState(bookCopy.serialNo, false);
+    const availableBooks = generate.searchQuery(key, isbn, title);
+    const [book] = await client.getAll(availableBooks, { msg: 'Book unavailable.', });
+    const availableCopies = generate.availableCopiesQuery(book.isbn);
+    const [bookCopy] = await client.getAll(availableCopies, { msg: 'Currently unavailable.', });
+    const updateCopyAvailability = generate.updateBookQuery(bookCopy.serialNo, false);
     const currentDate = new Date();
-    const addTable = getRegisterQuery('register', [
+    const updateRegister = generate.registerQuery('register', [
       userId,
       'borrow',
       bookCopy.serialNo,
@@ -69,42 +46,31 @@ class Library {
       new Date(currentDate.valueOf() + 864000000).toDateString(),
       null,
     ]);
-    const transaction = createTransaction([updateTable, addTable]);
-    return client.executeTransaction(transaction, {
-      msg: 'borrowed successfully.',
-      title: row.title,
-      userId,
-      serialNo: bookCopy.serialNo,
-    });
+    const transaction = generate.createTransaction([updateCopyAvailability, updateRegister]);
+    return client.executeTransaction(transaction, { msg: 'borrowed successfully.', title: book.title, userId, serialNo: bookCopy.serialNo, });
   }
 
   async returnBook(client, serialNo, userId) {
-    const borrowedBookQuery = selectBorrowedCopy(serialNo);
-    const [borrowedBook] = await client.getAll(borrowedBookQuery, {
-      msg: 'Book was not taken from library.',
-    });
-    const updateTable = updateBookState(borrowedBook.serialNo, true);
-    const [transactionDetail] = await client.getAll(getTransaction(serialNo));
-    const addTable = getRegisterQuery('register', [
+    const borrowBooks = generate.borrowedCopyQuery(serialNo);
+    const [book] = await client.getAll(borrowBooks, { msg: 'Book was not taken from library.', });
+    const updateCopyAvailability = generate.updateBookQuery(book.serialNo, true);
+    const [transactionDetails] = await client.getAll( generate.transactionQuery(serialNo) );
+    const updateRegister = generate.registerQuery('register', [
       userId,
       'return',
-      borrowedBook.serialNo,
-      transactionDetail.borrowDate,
-      transactionDetail.dueDate,
+      book.serialNo,
+      transactionDetails.borrowDate,
+      transactionDetails.dueDate,
       new Date().toDateString(),
     ]);
-    const transaction = createTransaction([updateTable, addTable]);
-    return client.executeTransaction(transaction, {
-      msg: 'returned successfully.',
-      userId,
-      serialNo: borrowedBook.serialNo,
-    });
+    const transaction = generate.createTransaction([updateCopyAvailability, updateRegister]);
+    return client.executeTransaction(transaction, { msg: 'returned successfully.', userId, serialNo: book.serialNo, });
   }
 
   async show(client, table) {
     const bookQuery =
       table === 'all books'
-        ? `${selectAllBooks()};`
+        ? `${generate.booksQuery()};`
         : `select * from ${table};`;
     const errMsg = { msg: 'Table is empty.' };
     return await client.getAll(bookQuery, errMsg);
@@ -113,29 +79,24 @@ class Library {
   async search(client, info) {
     const booksQuery =
       info.key == 'available'
-        ? selectAvailableBooks()
-        : selectBooks(info.key, info[info.key]);
+        ? generate.availableBooksQuery()
+        : generate.searchQuery(info.key, info[info.key]);
     const errMsg = { msg: `${info.key} ${info[info.key]} not matched.` };
     return await client.getAll(booksQuery, errMsg);
   }
 
   async registerUser(client, { id, name, password, designation }) {
-    const registrationQuery = getInsertQuery('members', [
-      id,
-      name,
-      password,
-      designation,
-    ]);
-    return await client.runQuery(registrationQuery, {
+    const addMember = generate.insertQuery('members', [ id, name, password, designation, ]);
+    return await client.runQuery(addMember, {
       msg: 'Registered successfully.',
     });
   }
 
   async validatePassword(client, id, password) {
-    const [user] = await client.getAll(getMemberQuery(id, password), {
+    const [member] = await client.getAll(generate.memberQuery(id, password), {
       msg: 'Error in login.',
     });
-    return { id: user.id, domain: user.designation };
+    return { id: member.id, domain: member.designation };
   }
 }
 
