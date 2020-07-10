@@ -33,9 +33,9 @@ class Library {
   async borrowBook(client, bookInfo, userId) {
     const { key, isbn, title } = bookInfo;
     const availableBooks = generate.searchQuery(key, isbn, title);
-    const [book] = await client.getAll(availableBooks, { msg: 'Book unavailable.', });
+    const book = await client.get(availableBooks, { msg: 'Book unavailable.', });
     const availableCopies = generate.availableCopiesQuery(book.isbn);
-    const [bookCopy] = await client.getAll(availableCopies, { msg: 'Currently unavailable.', });
+    const bookCopy = await client.get(availableCopies, { msg: 'Currently unavailable.', });
     const updateCopyAvailability = generate.updateBookQuery(bookCopy.serialNo, false);
     const currentDate = new Date();
     const updateRegister = generate.registerQuery('register', [
@@ -52,9 +52,9 @@ class Library {
 
   async returnBook(client, serialNo, userId) {
     const borrowBooks = generate.borrowedCopyQuery(serialNo);
-    const [book] = await client.getAll(borrowBooks, { msg: 'Book was not taken from library.', });
+    const book = await client.get(borrowBooks, { msg: 'Book was not taken from library.', });
     const updateCopyAvailability = generate.updateBookQuery(book.serialNo, true);
-    const [transactionDetails] = await client.getAll( generate.transactionQuery(serialNo) );
+    const transactionDetails = await client.get( generate.transactionQuery(serialNo) );
     const updateRegister = generate.registerQuery('register', [
       userId,
       'return',
@@ -68,19 +68,15 @@ class Library {
   }
 
   async show(client, table) {
-    const bookQuery =
-      table === 'all books'
-        ? `${generate.booksQuery()};`
-        : `select * from ${table};`;
+    let bookQuery = `select * from ${table};`;
+    if(table==='all books') bookQuery = `${generate.booksQuery()};`;
     const errMsg = { msg: 'Table is empty.' };
     return await client.getAll(bookQuery, errMsg);
   }
 
   async search(client, info) {
-    const booksQuery =
-      info.key == 'available'
-        ? generate.availableBooksQuery()
-        : generate.searchQuery(info.key, info[info.key]);
+    let booksQuery = generate.availableBooksQuery();
+    if(info.key !== 'available') booksQuery = generate.searchQuery(info.key, info[info.key]);
     const errMsg = { msg: `${info.key} ${info[info.key]} not matched.` };
     return await client.getAll(booksQuery, errMsg);
   }
@@ -93,7 +89,7 @@ class Library {
   }
 
   async validatePassword(client, id, password) {
-    const [member] = await client.getAll(generate.memberQuery(id, password), {
+    const member = await client.get(generate.memberQuery(id, password), {
       msg: 'Error in login.',
     });
     return { id: member.id, domain: member.designation };
