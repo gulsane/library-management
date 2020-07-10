@@ -14,15 +14,19 @@ module.exports = {
     isAvailable numeric(1)
   );`,
 
-  register: `
-  create table if not exists register (
+  borrowActivity: `
+  create table if not exists borrowActivity (
     transactionId integer primary key autoincrement,
-    id varchar(10) not null,
-    action varchar(6) not null,
+    memberId varchar(10) not null,
     serialNo integer not null,
     borrowDate date not null,
-    dueDate date not null,
-    returnDate date
+    dueDate date not null
+  );`,
+
+  returnActivity: `
+  create table if not exists returnActivity (
+    transactionId integer primary key,
+    returnDate date not null
   );`,
 
   members: `

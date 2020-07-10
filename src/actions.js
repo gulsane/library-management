@@ -3,8 +3,8 @@ const insertQuery = function (table, values) {
   return insertQuery.concat(values.map((e) => `'${e}'`).join(','), ');');
 };
 
-const registerQuery = function (table, values) {
-  const insertQuery = `insert into ${table} (id,action,serialNo,borrowDate,dueDate,returnDate) values (`;
+const borrowActivityQuery = function (values) {
+  const insertQuery = `insert into borrowActivity (memberId,serialNo,borrowDate,dueDate) values (`;
   return insertQuery.concat(values.map((e) => `'${e}'`).join(','), ');');
 };
 
@@ -40,7 +40,7 @@ const borrowedCopyQuery = function (serialNumber) {
 };
 
 const transactionQuery = function (serialNumber) {
-  return `select * from register where serialNo= '${serialNumber}' and action='borrow' order by transactionId desc;`;
+  return `select * from borrowActivity where serialNo= '${serialNumber}' order by transactionId desc;`;
 };
 
 const memberQuery = function (id, password) {
@@ -72,6 +72,6 @@ module.exports = {
   insertQueryForCopy,
   availableBooksQuery,
   memberQuery,
-  registerQuery,
+  borrowActivityQuery,
   transactionQuery,
 };

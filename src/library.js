@@ -30,7 +30,7 @@ class Library {
     }
   }
 
-  async borrowBook(client, bookInfo, userId) {
+  async borrowBook(client, bookInfo, memberId) {
     const { key, isbn, title } = bookInfo;
     const availableBooks = generate.searchQuery(key, isbn, title);
     const book = await client.get(availableBooks, { msg: 'Book unavailable.', });
@@ -38,16 +38,14 @@ class Library {
     const bookCopy = await client.get(availableCopies, { msg: 'Currently unavailable.', });
     const updateCopyAvailability = generate.updateBookQuery(bookCopy.serialNo, false);
     const currentDate = new Date();
-    const updateRegister = generate.registerQuery('register', [
-      userId,
-      'borrow',
+    const updateBorrowActivity = generate.borrowActivityQuery([
+      memberId,
       bookCopy.serialNo,
       currentDate.toDateString(),
-      new Date(currentDate.valueOf() + 864000000).toDateString(),
-      null,
+      new Date(currentDate.valueOf() + 864000000).toDateString()
     ]);
-    const transaction = generate.createTransaction([updateCopyAvailability, updateRegister]);
-    return client.executeTransaction(transaction, { msg: 'borrowed successfully.', title: book.title, userId, serialNo: bookCopy.serialNo, });
+    const transaction = generate.createTransaction([updateCopyAvailability, updateBorrowActivity]);
+    return client.executeTransaction(transaction, { msg: 'borrowed successfully.', title: book.title, memberId, serialNo: bookCopy.serialNo, });
   }
 
   async returnBook(client, serialNo, userId) {
@@ -55,15 +53,11 @@ class Library {
     const book = await client.get(borrowBooks, { msg: 'Book was not taken from library.', });
     const updateCopyAvailability = generate.updateBookQuery(book.serialNo, true);
     const transactionDetails = await client.get( generate.transactionQuery(serialNo) );
-    const updateRegister = generate.registerQuery('register', [
-      userId,
-      'return',
-      book.serialNo,
-      transactionDetails.borrowDate,
-      transactionDetails.dueDate,
-      new Date().toDateString(),
+    const updateReturnActivity = generate.insertQuery('returnActivity', [
+      transactionDetails.transactionId,
+      new Date().toDateString()
     ]);
-    const transaction = generate.createTransaction([updateCopyAvailability, updateRegister]);
+    const transaction = generate.createTransaction([updateCopyAvailability, updateReturnActivity]);
     return client.executeTransaction(transaction, { msg: 'returned successfully.', userId, serialNo: book.serialNo, });
   }
 
@@ -90,7 +84,7 @@ class Library {
 
   async validatePassword(client, id, password) {
     const member = await client.get(generate.memberQuery(id, password), {
-      msg: 'Error in login.',
+      msg: 'Details not matched.',
     });
     return { id: member.id, domain: member.designation };
   }

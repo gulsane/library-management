@@ -19,7 +19,8 @@ class Sql {
 
     sql.createTable(schemas.books);
     sql.createTable(schemas.copies);
-    sql.createTable(schemas.register);
+    sql.createTable(schemas.borrowActivity);
+    sql.createTable(schemas.returnActivity);
     sql.createTable(schemas.members);
 
     return sql;
