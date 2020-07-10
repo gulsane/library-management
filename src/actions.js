@@ -39,8 +39,8 @@ const borrowedCopyQuery = function (serialNumber) {
   return `select * from copies where serialNo='${serialNumber}' and isAvailable='false';`;
 };
 
-const transactionQuery = function (serialNumber) {
-  return `select * from borrowActivity where serialNo= '${serialNumber}' order by transactionId desc;`;
+const transactionQuery = function (serialNumber,userId) {
+  return `select * from (${userActivityLogQuery(userId)}) where bookSerialNumber = '${serialNumber}' and returnDate is null;`;
 };
 
 const memberQuery = function (id, password) {
@@ -75,7 +75,7 @@ const activityLogQuery = function () {
 };
 
 const userActivityLogQuery = function (userId) {
-  return `${activityLogQuery()} where memberId='${userId}';`
+  return `${activityLogQuery()} where memberId='${userId}'`
 };
 
 module.exports = {

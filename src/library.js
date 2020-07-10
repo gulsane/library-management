@@ -76,9 +76,7 @@ class Library {
       book.serialNo,
       true
     );
-    const transactionDetails = await client.get(
-      generate.transactionQuery(serialNo)
-    );
+    const transactionDetails = await client.get( generate.transactionQuery(serialNo,userId),{msg:"You haven't borrowed this book"} );
     const updateReturnActivity = generate.insertQuery('returnActivity', [
       transactionDetails.transactionId,
       new Date().toDateString(),
@@ -103,7 +101,7 @@ class Library {
   }
 
   async showHistory(client, userId) {
-    const activityQuery = generate.userActivityLogQuery(userId);
+    const activityQuery = `${generate.userActivityLogQuery(userId)};`;
     const errMsg = { msg: 'Table is empty.' };
     return await client.getAll(activityQuery, errMsg);
   }
