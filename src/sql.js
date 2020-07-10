@@ -9,7 +9,7 @@ class Sql {
     return new Promise((resolve, reject) => {
       this.db.run(schema, (err) => {
         if (err) reject(err);
-        resolve({ msg: 'Table created successfully.' });
+        resolve({message: 'Table created successfully.' });
       });
     });
   }
@@ -26,20 +26,20 @@ class Sql {
     return sql;
   }
 
-  executeTransaction(transaction, msg) {
+  executeTransaction(transaction,message) {
     return new Promise((resolve, reject) => {
       this.db.exec(transaction, (err) => {
         if (err) reject(err);
-        resolve(msg);
+        resolve(message);
       });
     });
   }
 
-  runQuery(query, msg) {
+  runQuery(query,message) {
     return new Promise((resolve, reject) => {
       this.db.run(query, (err) => {
         if (err) reject(err);
-        resolve(msg);
+        resolve(message);
       });
     });
   }

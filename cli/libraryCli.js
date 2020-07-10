@@ -1,19 +1,29 @@
-const {librarian} = require('../config');
 const Vorpal = require('vorpal');
+const Table = require('cli-table');
+const { librarian } = require('../config');
 const prompts = require('../src/prompt');
 
 const Sqlite3 = require('sqlite3');
 const { Sql } = require('../src/sql');
 const db = new Sqlite3.Database('./library.db');
-let sqlite;
 
 const { Library } = require('../src/library');
 const library = new Library();
 
-let interfaceInstances;
-let userId;
+let interfaceInstances, userId, sqlite;
 
-const getUserId = () => userId;
+const printRows = function (details) {
+  const length = Object.keys(details[0]).length;
+  const colWidths = [35].concat(new Array(length - 1).fill(20));
+  const tableDetails = { head: Object.keys(details[0]), colWidths };
+  const table = new Table(tableDetails);
+  details.forEach((detail) => table.push(Object.values(detail)));
+  console.log(table.toString());
+};
+
+const printRow = function (detail) {
+  printRows([detail]);
+};
 
 const logout = function (vorpal) {
   vorpal.command('logout').action(function (argument, callback) {
@@ -33,8 +43,8 @@ const addLogin = function (vorpal) {
         interfaceInstances[domain].show();
         userId = id;
       })
-      .then(callback)
-      .catch(callback);
+      .catch(printRow)
+      .then(callback);
   });
 };
 
@@ -42,8 +52,9 @@ const addSignIn = function (vorpal) {
   vorpal.command('signIn').action(function (argument, callback) {
     this.prompt(prompts.signIn)
       .then((details) => library.registerUser(sqlite, details))
-      .then(callback)
-      .catch(callback);
+      .then(printRow)
+      .catch(printRow)
+      .then(callback);
   });
 };
 
@@ -51,8 +62,9 @@ const addBook = function (vorpal) {
   vorpal.command('add book').action(function (argument, callback) {
     this.prompt(prompts.addBook)
       .then((book) => library.addBook(sqlite, book))
-      .then(callback)
-      .catch(callback);
+      .then(printRow)
+      .catch(printRow)
+      .then(callback);
   });
 };
 
@@ -60,8 +72,9 @@ const addCopy = function (vorpal) {
   vorpal.command('add copy').action(function (argument, callback) {
     this.prompt(prompts.addCopy)
       .then(({ isbn }) => library.addCopy(sqlite, isbn))
-      .then(callback)
-      .catch(callback);
+      .then(printRow)
+      .catch(printRow)
+      .then(callback);
   });
 };
 
@@ -69,11 +82,9 @@ const addShowTables = function (vorpal) {
   vorpal.command('show').action(function (argument, callback) {
     this.prompt(prompts.showTable)
       .then(({ table }) => library.show(sqlite, table))
-      .then((rows) => {
-        console.table(rows);
-        callback();
-      })
-      .catch(callback);
+      .then(printRows)
+      .catch(printRow)
+      .then(callback);
   });
 };
 
@@ -81,41 +92,39 @@ const addSearch = function (vorpal) {
   vorpal.command('search').action(function (argument, callback) {
     this.prompt(prompts.search)
       .then((info) => library.search(sqlite, info))
-      .then((rows) => {
-        console.table(rows);
-        callback();
-      })
-      .catch(callback);
+      .then(printRows)
+      .catch(printRow)
+      .then(callback);
   });
 };
 
 const addBorrowBook = function (vorpal) {
   vorpal.command('borrow book').action(function (argument, callback) {
     this.prompt(prompts.borrowBook)
-      .then((details) => library.borrowBook(sqlite, details, getUserId()))
-      .then(callback)
-      .catch(callback);
+      .then((details) => library.borrowBook(sqlite, details, userId))
+      .then(printRow)
+      .catch(printRow)
+      .then(callback);
   });
 };
 
 const addReturnBook = function (vorpal) {
   vorpal.command('return book').action(function (argument, callback) {
     this.prompt(prompts.returnBook)
-      .then(({ serialNo }) => library.returnBook(sqlite, serialNo, getUserId()))
-      .then(callback)
-      .catch(callback);
+      .then(({ serialNo }) => library.returnBook(sqlite, serialNo, userId))
+      .then(printRow)
+      .catch(printRow)
+      .then(callback);
   });
 };
 
 const addActivity = function (vorpal) {
   vorpal.command('my activity').action(function (argument, callback) {
     this.prompt([])
-      .then(() => library.showHistory(sqlite, getUserId()))
-      .then((rows) => {
-        console.table(rows);
-        callback();
-      })
-      .catch(callback);
+      .then(() => library.showHistory(sqlite, userId))
+      .then(printRows)
+      .catch(printRow)
+      .then(callback);
   });
 };
 
@@ -125,7 +134,6 @@ const createMainInterface = function () {
   addSignIn(vorpal);
 
   library.registerUser(sqlite, librarian, 'librarian');
-
   vorpal.delimiter(vorpal.chalk.yellow('Library $ '));
   return vorpal;
 };
@@ -157,10 +165,9 @@ const createBorrowerInterface = function () {
 const createTablesInDb = async function () {
   sqlite = await Sql.init(db);
   return sqlite;
-}
+};
 
 const startCli = async function () {
-
   await createTablesInDb();
 
   interfaceInstances = {

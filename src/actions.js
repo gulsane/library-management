@@ -40,7 +40,7 @@ const borrowedCopyQuery = function (serialNumber) {
 };
 
 const transactionQuery = function (serialNumber,userId) {
-  return `select * from (${userActivityLogQuery(userId)}) where bookSerialNumber = '${serialNumber}' and returnDate is null;`;
+  return `select * from (${userActivityLogQuery(userId)}) where bookSerialNumber = '${serialNumber}' and returnDate='Not yet returned';`;
 };
 
 const memberQuery = function (id, password) {
@@ -68,7 +68,7 @@ const activityLogQuery = function () {
         ,ba.serialNo as bookSerialNumber
         ,ba.borrowDate
         ,ba.dueDate
-        ,ra.returnDate
+        ,ifnull(ra.returnDate,'Not yet returned') as returnDate
   from borrowActivity as ba
   left join returnActivity as ra
   on ba.transactionId = ra.transactionId`;

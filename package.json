@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/gulsane/library-management#readme",
   "dependencies": {
+    "cli-table": "^0.3.1",
     "sqlite3": "^5.0.0",
     "vorpal": "^1.12.0"
   }
