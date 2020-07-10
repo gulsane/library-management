@@ -61,6 +61,19 @@ const booksQuery = function () {
   group by books.isbn`;
 };
 
+const activityLogQuery = function () {
+  return `
+  select ba.transactionId
+        ,ba.memberId
+        ,ba.serialNo as bookSerialNumber
+        ,ba.borrowDate
+        ,ba.dueDate
+        ,ra.returnDate
+  from borrowActivity as ba
+  left join returnActivity as ra
+  on ba.transactionId = ra.transactionId;`;
+};
+
 module.exports = {
   insertQuery,
   createTransaction,
@@ -74,4 +87,5 @@ module.exports = {
   memberQuery,
   borrowActivityQuery,
   transactionQuery,
+  activityLogQuery,
 };

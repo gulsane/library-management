@@ -48,7 +48,7 @@ const showTable = [
     name: 'table',
     message: 'Select a table name to see : ',
     type: 'list',
-    choices: ['all books', 'copies', 'borrowActivity', 'returnActivity'],
+    choices: ['all books', 'copies', 'activity log', 'borrowActivity', 'returnActivity'],
   },
 ];
 

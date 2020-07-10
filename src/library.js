@@ -1,4 +1,5 @@
 const generate = require('./actions');
+const {booksQuery} = require('./actions');
 class Library {
   async addBook(client, book) {
     const { isbn, title, category, author } = book;
@@ -63,7 +64,8 @@ class Library {
 
   async show(client, table) {
     let bookQuery = `select * from ${table};`;
-    if(table==='all books') bookQuery = `${generate.booksQuery()};`;
+    if (table === 'activity log') bookQuery = generate.activityLogQuery();
+    if (table === 'all books') bookQuery = `${generate.booksQuery()};`;
     const errMsg = { msg: 'Table is empty.' };
     return await client.getAll(bookQuery, errMsg);
   }
