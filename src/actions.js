@@ -71,7 +71,11 @@ const activityLogQuery = function () {
         ,ra.returnDate
   from borrowActivity as ba
   left join returnActivity as ra
-  on ba.transactionId = ra.transactionId;`;
+  on ba.transactionId = ra.transactionId`;
+};
+
+const userActivityLogQuery = function (userId) {
+  return `${activityLogQuery()} where memberId='${userId}';`
 };
 
 module.exports = {
@@ -88,4 +92,5 @@ module.exports = {
   borrowActivityQuery,
   transactionQuery,
   activityLogQuery,
+  userActivityLogQuery,
 };

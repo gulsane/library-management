@@ -26,7 +26,7 @@ module.exports = {
   returnActivity: `
   create table if not exists returnActivity (
     transactionId integer primary key,
-    returnDate date not null
+    returnDate date default 'Not returned yet'
   );`,
 
   members: `

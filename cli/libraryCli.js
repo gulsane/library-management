@@ -97,6 +97,18 @@ const addReturnBook = function (vorpal, library, sqlite) {
   });
 };
 
+const addActivity = function (vorpal, library, sqlite) {
+  vorpal.command('my activity').action(function (argument, callback) {
+    this.prompt([])
+      .then(() => library.showHistory(sqlite, getUserId()))
+      .then((rows) => {
+        console.table(rows);
+        callback();
+      })
+      .catch(callback);
+  });
+};
+
 const createMainInterface = function (library, sqlite) {
   const vorpal = new Vorpal();
   addLogin(vorpal, library, sqlite);
@@ -124,6 +136,7 @@ const createBorrowerInterface = function (library, sqlite) {
   addBorrowBook(vorpal, library, sqlite);
   addReturnBook(vorpal, library, sqlite);
   addSearch(vorpal, library, sqlite);
+  addActivity(vorpal, library, sqlite);
 
   vorpal.delimiter(vorpal.chalk.cyan('Borrower $ '));
   return vorpal;
