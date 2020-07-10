@@ -1,12 +1,13 @@
+const {librarian} = require('../config');
 const Vorpal = require('vorpal');
 const prompts = require('../src/prompt');
 
 const Sqlite3 = require('sqlite3');
-const { Library } = require('../src/library');
 const { Sql } = require('../src/sql');
-
 const db = new Sqlite3.Database('./library.db');
-const sqlite = Sql.init(db);
+let sqlite;
+
+const { Library } = require('../src/library');
 const library = new Library();
 
 let interfaceInstances;
@@ -123,6 +124,8 @@ const createMainInterface = function () {
   addLogin(vorpal);
   addSignIn(vorpal);
 
+  library.registerUser(sqlite, librarian, 'librarian');
+
   vorpal.delimiter(vorpal.chalk.yellow('Library $ '));
   return vorpal;
 };
@@ -151,7 +154,15 @@ const createBorrowerInterface = function () {
   return vorpal;
 };
 
-const startCli = function () {
+const createTablesInDb = async function () {
+  sqlite = await Sql.init(db);
+  return sqlite;
+}
+
+const startCli = async function () {
+
+  await createTablesInDb();
+
   interfaceInstances = {
     main: createMainInterface(),
     borrower: createBorrowerInterface(),

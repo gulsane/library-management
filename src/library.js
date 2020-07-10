@@ -114,7 +114,7 @@ class Library {
     return await client.getAll(booksQuery, errMsg);
   }
 
-  async registerUser(client, { id, name, password, designation }) {
+  async registerUser(client, { id, name, password }, designation='borrower') {
     const addMember = generate.insertQuery('members', [
       id,
       name,

@@ -14,14 +14,14 @@ class Sql {
     });
   }
 
-  static init(db) {
+  static async init(db) {
     const sql = new Sql(db);
 
-    sql.createTable(schemas.books);
-    sql.createTable(schemas.copies);
-    sql.createTable(schemas.borrowActivity);
-    sql.createTable(schemas.returnActivity);
-    sql.createTable(schemas.members);
+    await sql.createTable(schemas.books);
+    await sql.createTable(schemas.copies);
+    await sql.createTable(schemas.borrowActivity);
+    await sql.createTable(schemas.returnActivity);
+    await sql.createTable(schemas.members);
 
     return sql;
   }
